@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet, Text, TextInput, View } from 'react-native';
 import { StackNavigator } from 'react-navigation';
 
-const Input = ({Label, value, onChangeText, placeholder, secureTextEntry}) => {
+export const Input = ({Label, value, onChangeText, placeholder, secureTextEntry}) => {
     return (
       <View style = {styles.container}>
         <TextInput
@@ -42,5 +42,3 @@ const Input = ({Label, value, onChangeText, placeholder, secureTextEntry}) => {
       width: '100%',
     }
   });
-
-export { Input };

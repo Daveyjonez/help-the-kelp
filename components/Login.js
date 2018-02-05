@@ -1,11 +1,13 @@
 import React from 'react';
-import { StyleSheet, Text, View, Button } from 'react-native';
+import { StyleSheet, Text, View, Button, ImageBackground } from 'react-native';
 import { StackNavigator } from 'react-navigation';
 
 import { Input } from './Input';
 import Dashboard from './Dashboard';
 
 import * as firebase from 'firebase';
+
+var background = require('../assets/images/splash-01.png');
 
 export default class Login extends React.Component {
     constructor(props){
@@ -28,7 +30,7 @@ export default class Login extends React.Component {
             firebase.auth().signInWithEmailAndPassword(email, password)
             .then(function(user){
                 console.log(user);
-                navigate('Dashboard');
+                navigate('Dashboard', {email, password});
             })
         }
         catch (error){
@@ -53,38 +55,39 @@ export default class Login extends React.Component {
   render() {
     const{ navigate } = this.props.navigation;
     return (
-        <View style={styles.container}>
-            <Input
-                placeholder = 'Please enter your email...'
-                label = 'Email'
-                onChangeText = {email => this.setState({email})}
-                value = {this.state.email}
-            />
-            <Input
-                placeholder = 'Please enter your password...'
-                label = 'Password'
-                secureTextEntry
-                onChangeText = {password => this.setState({password})}
-                value = {this.state.password}
-            />
-            <Button
-            title = 'Log in'
-            onPress = {() => this.loginUser(this.state.email, this.state.password, navigate)}/>
+        <ImageBackground
+            source={background}
+            style={{width: '100%', height: '100%'}}>
 
-            <Button
-            title = 'Sign up'
-            onPress = {() => this.signUpUser(this.state.email, this.state.password)}/>
+            <View style={styles.container}>
+                <Input
+                    placeholder = 'Email'
+                    onChangeText = {email => this.setState({email})}
+                    value = {this.state.email}
+                />
+                <Input
+                    placeholder = 'Password'
+                    secureTextEntry
+                    onChangeText = {password => this.setState({password})}
+                    value = {this.state.password}
+                />
+                <Button
+                title = 'Log in'
+                onPress = {() => this.loginUser(this.state.email, this.state.password, navigate)}/>
 
-        </View>
+                <Button
+                title = 'Sign up'
+                onPress = {() => this.signUpUser(this.state.email, this.state.password)}/>
+            </View>
+        </ImageBackground>
     );
   }
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+      marginTop: 250,
     padding: 20,
-    backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
   },

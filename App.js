@@ -5,29 +5,14 @@ import {Avatar, Icon } from 'react-native-elements';
 
 import Dashboard from './components/Dashboard';
 import Login from './components/Login';
+import Profile from './components/Profile';
+import AddEvent from './components/Profile';
 
 const Application = StackNavigator({
     Login: { screen: Login},
-    Dashboard: { screen: Dashboard,
-                 navigationOptions: {
-                    headerLeft: (
-                        <Icon
-                        name='face'
-                        type='material-community'
-                        />),
-                    headerTitle: (
-                        <Icon
-                            name='format-list-bulleted'
-                            type='material-community'
-                        />),
-                    headerRight: (
-                        <Icon
-                            name='plus-box-outline'
-                            type='material-community'
-                        />),
-
-                 }
-    },
+    Dashboard: { screen: Dashboard },
+    Profile: {screen: Profile},
+    AddEvent: {screen: AddEvent},
 });
 
 export default class App extends React.Component {
@@ -37,13 +22,3 @@ export default class App extends React.Component {
     );
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
