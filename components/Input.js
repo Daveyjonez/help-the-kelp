@@ -2,6 +2,10 @@ import React from 'react';
 import { StyleSheet, Text, TextInput, View } from 'react-native';
 import { StackNavigator } from 'react-navigation';
 
+const Dimensions = require('Dimensions');
+const window = Dimensions.get('window');
+const width = Dimensions.get('window').width;
+
 export const Input = ({Label, value, onChangeText, placeholder, secureTextEntry}) => {
     return (
       <View style = {styles.container}>
@@ -12,6 +16,7 @@ export const Input = ({Label, value, onChangeText, placeholder, secureTextEntry}
             style = {styles.input}
             secureTextEntry = {secureTextEntry}
             value = {value}
+            keyboardType={'email-address'}
         />
       </View>
     );
@@ -24,6 +29,7 @@ export const Input = ({Label, value, onChangeText, placeholder, secureTextEntry}
       borderColor: '#eee',
       borderBottomWidth: 2,
       padding: 10,
+      width: width - 100,
     },
     label: {
       padding: 5,

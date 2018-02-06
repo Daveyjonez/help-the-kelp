@@ -1,8 +1,11 @@
 import React from 'react';
 import { StyleSheet, Text, TextInput, Button, View, ScrollView } from 'react-native';
 import { Icon } from 'react-native-elements';
-
 import EventCard from './EventCard';
+
+import { seaFoamGreen } from '../assets/styles/colors';
+
+import * as firebase from 'firebase';
 
 export default class Dashboard extends React.Component {
     constructor(props){
@@ -12,11 +15,29 @@ export default class Dashboard extends React.Component {
         }
     }
 
+    componentWillMount(){
+        firebase.auth().onAuthStateChanged(function(user) {
+          if (user) {
+            // User is signed in.
+            console.log('User signed in')
+            console.log(user)
+          } else {
+            // No user is signed in.
+            console.log('No user signed in')
+          }
+        });
+    }
+
+    viewProfile = (email, navigation) => {
+        console.log(email)
+        navigation.navigate('Profile', {email});
+    }
+
     signOutUser = () => {
         try{
-            this.props.firebase.auth().signOut().then(function() {
+            firebase.auth().signOut().then(function() {
                 console.log('Signed Out')
-                navigate('Login')
+                this.props.navigation.navigate('Login')
             });
         }
         catch (error){
@@ -31,19 +52,20 @@ export default class Dashboard extends React.Component {
            <Icon
            name='account-circle'
            type='material-community'
-           paddingLeft={20}
-           onPress={() => navigation.navigate('Profile')}
+           iconStyle={styles.headerLeft}
+           onPress={() => this.viewProfile(this.state.email, navigation)}
            />),
        headerTitle: (
            <Icon
                name='format-list-bulleted'
                type='material-community'
+               iconStyle={styles.headerTitle}
            />),
        headerRight: (
            <Icon
                name='plus-box'
                type='material-community'
-               paddingRight={20}
+               iconStyle={styles.headerRight}
                onPress={() => navigation.navigate('AddEvent')}
            />),
        }
@@ -51,13 +73,25 @@ export default class Dashboard extends React.Component {
 
     render(){
 
+        const{ navigate } = this.props.navigation;
+
+        console.log('DASHBOARD PROPS')
+        console.log(this.props)
         return (
             <ScrollView>
-                <EventCard/>
-                <EventCard/>
+                <Text style={styles.dashboardTitle}>
+                    Upcoming Cleanups
+                </Text>
+                <EventCard
+                    imageSource='https://www.californiabeaches.com/wp-content/uploads/2014/09/scripps-pier-beach-la-jolla-bryce16-8-1000x567.jpg'
+                    title='Scripps cleanup'
+                    date='2/5/2017'
+                    location='Scripps Pier, La Jolla'
+                    onPress={() => navigate('EventPage', {title: this.state.title})}/>
+
                 <Button
                     title = 'Sign out'
-                    onPress = {() => this.signOutUser(this.state.email, this.state.password)}/>
+                    onPress = {() => this.signOutUser(navigate)}/>
             </ScrollView>
         );
     }
@@ -71,4 +105,20 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  headerLeft: {
+      color: seaFoamGreen,
+      paddingLeft: 20,
+  },
+  headerTitle: {
+      color: seaFoamGreen,
+  },
+  headerRight: {
+      color: seaFoamGreen,
+      paddingRight: 20,
+  },
+  dashboardTitle: {
+      fontSize: 25,
+      color: seaFoamGreen,
+      paddingLeft: 10,
+  }
 });

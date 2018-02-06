@@ -5,19 +5,20 @@ import { Button } from 'react-native-elements';
 import { Input } from './Input';
 import Dashboard from './Dashboard';
 
-import seaFoamGreen from '../assets/styles/colors';
+import { seaFoamGreen }from '../assets/styles/colors';
 
 import * as firebase from 'firebase';
 
-var background = require('../assets/images/splash-01.png');
+var background = require('../assets/images/signup-01.png');
 
-export default class Login extends React.Component {
+export default class SignUp extends React.Component {
 
     constructor(props){
         super(props)
         this.state = {
             email: '',
             password: '',
+            confirmPassword: '',
         }
     }
 
@@ -26,22 +27,24 @@ export default class Login extends React.Component {
             apiKey: 'AIzaSyAiCNhRbXsyyD_r5uyGeNHaHcPH5W3_VAM',
             authDomain: 'help-the-kelp.firebaseapp.com',
         }
-
         if (!firebase.apps.length) {
             firebase.initializeApp(firebaseConfig);
         }
     }
 
-    loginUser = (email, password, navigate) => {
+    signUpUser = (email, password, confirmPassword) => {
         try{
-            firebase.auth().signInWithEmailAndPassword(email, password)
-            .then(function(user){
-                console.log(user);
-                navigate('Dashboard', {email, password});
-            })
+            if(this.state.password.length < 6){
+                alert('Please use at least 6 characters for your password')
+                return;
+            }
+            if(password !== confirmPassword){
+                alert('Passwords do not match')
+                return;
+            }
+            firebase.auth().createUserWithEmailAndPassword(email, password);
         }
         catch (error){
-            alert('No known user for that email and password combination')
             console.log(error.toString());
         }
     }
@@ -50,7 +53,6 @@ export default class Login extends React.Component {
 
     render() {
         const{ navigate } = this.props.navigation;
-        
         return (
             <ImageBackground
             source={background}
@@ -58,6 +60,16 @@ export default class Login extends React.Component {
                 <KeyboardAvoidingView
                     style={styles.container}
                     behavior='padding'>
+                    <Input
+                        placeholder = 'First Name'
+                        onChangeText = {firstName => this.setState({firstName})}
+                        value = {this.state.firstName}
+                    />
+                    <Input
+                        placeholder = 'Last Name'
+                        onChangeText = {lastName => this.setState({lastName})}
+                        value = {this.state.lastName}
+                    />
                     <Input
                         placeholder = 'Email'
                         onChangeText = {email => this.setState({email})}
@@ -69,17 +81,23 @@ export default class Login extends React.Component {
                         onChangeText = {password => this.setState({password})}
                         value = {this.state.password}
                     />
-                    <Button style={styles.loginScreenButtons}
-                        title = 'Log in'
-                        backgroundColor='#3CAFAB'
-                        borderRadius={10}
-                        onPress = {() => this.loginUser(this.state.email, this.state.password, navigate)}/>
+                    <Input
+                        placeholder = 'Confirm password'
+                        secureTextEntry
+                        onChangeText = {confirmPassword => this.setState({confirmPassword})}
+                        value = {this.state.confirmPassword}
+                    />
 
                     <Button style={styles.loginScreenButtons}
-                        title = 'Sign up'
+                        title = 'Create Account'
                         backgroundColor='#3CAFAB'
                         borderRadius={10}
-                        onPress = {() => navigate('SignUp')}/>
+                        onPress = {() => this.signUpUser(this.state.email, this.state.password)}/>
+                    <Text style={styles.goBackButton}
+                        activeOpacity={0.75}
+                        onPress = {() => this.props.navigation.goBack()}>
+                        Go back
+                    </Text>
                 </KeyboardAvoidingView>
             </ImageBackground>
         );
@@ -88,7 +106,7 @@ export default class Login extends React.Component {
 
 const styles = StyleSheet.create({
     container: {
-        marginTop: 300,
+        marginTop: 100,
         padding: 20,
         alignItems: 'center',
         justifyContent: 'center',
@@ -96,5 +114,10 @@ const styles = StyleSheet.create({
     loginScreenButtons: {
         paddingTop: 20,
         width: 300,
-    }
+    },
+    goBackButton: {
+        fontSize: 20,
+        color: seaFoamGreen,
+        marginTop: 15,
+    },
 });

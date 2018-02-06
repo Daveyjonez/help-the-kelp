@@ -1,64 +1,67 @@
 import React from 'react';
-import { StyleSheet, Text, TextInput, View, Image } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, TextInput, View, Image } from 'react-native';
 import { StackNavigator } from 'react-navigation';
+import propTypes from 'prop-types';
 
-export default class EventCard extends React.Component {
-    render() {
-        return (
+import { seaFoamGreen } from '../assets/styles/colors';
+
+class EventCard extends React.Component {
+    render(){
+    const { onPress } = this.props;
+
+    return (
+        <TouchableOpacity
+        activeOpacity={0.75}
+        onPress={() => onPress()}>
             <View style={styles.container}>
                 <View style={styles.info}>
-                    <Image
-                        style={{width: 100, height: 100}}
-                        source={{uri:'https://yournorthcounty.com/wp-content/uploads/2014/03/Cardiff-by-the-Sea.jpg'}}/>
+                <Image
+                    style={{width: 100, height: 100, borderTopLeftRadius: 5, borderTopRightRadius: 5}}
+                    source={{uri: this.props.imageSource}}/>
                     <View style={styles.text}>
                         <View style={styles.headerText}>
-                            <Text style={styles.titleText}>
-                                Davids Cardiff Cleanup
-                            </Text>
-                            <Text style={styles.dateText}>
-                                2/5/2017
-                            </Text>
+                            <Text style={styles.titleText}> {this.props.title} </Text>
+                            <Text style={styles.dateText}> {this.props.date} </Text>
                         </View>
-                        <Text style={styles.locationText}>
-                            Location
-                        </Text>
+                        <Text style={styles.locationText}> {this.props.location} </Text>
                     </View>
                 </View>
             </View>
-        );
-    }
+        </TouchableOpacity>
+    );
 }
+}
+
+EventCard.propTypes = {
+    onPress: propTypes.func.isRequired
+};
 
 const styles = StyleSheet.create({
     container: {
         flexDirection: 'row',
-        alignSelf: 'stretch',
-        borderColor: '#cecece',
-        borderWidth: 1,
-        borderRadius: 5,
+        justifyContent: 'space-between',
+        borderColor: 'gray',
 
-        shadowOpacity: 0.75,
-        shadowRadius: 3,
-        shadowColor: '#cecece',
         shadowOffset: { height: 0, width: 0 },
-        marginLeft: 10,
-        marginRight: 10,
         marginTop: 5,
+        marginLeft: 5,
+        marginRight: 5,
         backgroundColor: 'white',
     },
     info: {
         flexDirection: 'row',
     },
     text: {
-            flexDirection: 'column',
-            paddingLeft: 5,
+        flexDirection: 'column',
+        paddingLeft: 5,
     },
     headerText: {
-            flexDirection: 'row',
-            alignSelf: 'stretch',
+        flexDirection: 'row',
+        alignContent: 'flex-end',
     },
     titleText: {
         fontSize: 16,
+        color: seaFoamGreen,
     },
     dateText: {
         fontSize: 10,
@@ -66,8 +69,11 @@ const styles = StyleSheet.create({
     },
     locationText: {
         fontSize: 12,
+        fontStyle: 'italic',
     },
     weatherText: {
         fontSize: 12,
     },
 });
+
+export default EventCard;
