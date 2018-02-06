@@ -2,6 +2,8 @@ import React from 'react';
 import { StackNavigator } from 'react-navigation';
 import { Font } from 'expo';
 
+import * as firebase from 'firebase';
+
 import Dashboard from './components/Dashboard';
 import Login from './components/Login';
 import SignUp from './components/SignUp';
@@ -20,11 +22,15 @@ const Application = StackNavigator({
 
 export default class App extends React.Component {
 
-    componentWillMount() {
-        Font.loadAsync({
-            'moon-light': require('./assets/fonts/Moon Light.otf'),
-            'moon-bold': require('./assets/fonts/Moon Bold.otf'),
-        });
+    componentWillMount(){
+        const firebaseConfig = {
+            apiKey: 'AIzaSyAiCNhRbXsyyD_r5uyGeNHaHcPH5W3_VAM',
+            authDomain: 'help-the-kelp.firebaseapp.com',
+        }
+
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
     }
 
     render() {

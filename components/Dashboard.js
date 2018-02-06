@@ -56,11 +56,7 @@ export default class Dashboard extends React.Component {
            onPress={() => this.viewProfile(this.state.email, navigation)}
            />),
        headerTitle: (
-           <Icon
-               name='format-list-bulleted'
-               type='material-community'
-               iconStyle={styles.headerTitle}
-           />),
+           <Text style={styles.headerTitle}>Dashboard</Text>),
        headerRight: (
            <Icon
                name='plus-box'
@@ -110,6 +106,7 @@ const styles = StyleSheet.create({
       paddingLeft: 20,
   },
   headerTitle: {
+      fontSize: 20,
       color: seaFoamGreen,
   },
   headerRight: {

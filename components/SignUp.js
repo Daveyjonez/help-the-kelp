@@ -16,37 +16,70 @@ export default class SignUp extends React.Component {
     constructor(props){
         super(props)
         this.state = {
+            firstName: '',
+            lastName: '',
             email: '',
             password: '',
             confirmPassword: '',
         }
     }
 
-    componentWillMount(){
-        const firebaseConfig = {
+    signUpUser = () => {
+
+        var databaseApp = null;
+
+        const datafirebaseConfig = {
             apiKey: 'AIzaSyAiCNhRbXsyyD_r5uyGeNHaHcPH5W3_VAM',
             authDomain: 'help-the-kelp.firebaseapp.com',
+            databaseURL: 'https://help-the-kelp.firebaseio.com/',
         }
-        if (!firebase.apps.length) {
-            firebase.initializeApp(firebaseConfig);
+        if (!databaseApp) {
+            console.log('INITIALIZING FIREBASE APP...');
+            var databaseApp = firebase.initializeApp(datafirebaseConfig, 'database');
         }
-    }
 
-    signUpUser = (email, password, confirmPassword) => {
         try{
             if(this.state.password.length < 6){
                 alert('Please use at least 6 characters for your password')
                 return;
             }
-            if(password !== confirmPassword){
-                alert('Passwords do not match')
+            if(this.state.password === this.state.confirmPassword){
+                console.log('CREATING USER...');
+                databaseApp.auth().createUserWithEmailAndPassword(this.state.email, this.state.password);
+                databaseApp.auth().onAuthStateChanged(function(user) {
+                    if (user) {
+                        console.log('WRITING TO DATABASE...');
+                        this.writeUserData(databaseApp, user, this.state.email, this.state.firstName, this.state.lastName);
+                    }
+                    else {
+                        alert('Something went wrong. Please try again.');
+                        return;
+                    }
+                });
+            }
+            else{
+                alert('Passwords do not match');
                 return;
             }
-            firebase.auth().createUserWithEmailAndPassword(email, password);
+            databaseApp.auth().signInWithEmailAndPassword(this.state.email, this.state.password)
         }
         catch (error){
             console.log(error.toString());
         }
+    }
+
+    writeUserData = (databaseApp, user, email, first, last) => {
+        console.log('ADDING USER ' + user.uid)
+        databaseApp.database().ref('users/' + user.uid).set({
+            email: email,
+            first: first,
+            last: last,
+            profile_picture: null,
+            pounds: 0,
+            cleanups: 0,
+        });
+        console.log('WRITE COMPLETE')
+        //navigate to dashboard
     }
 
     static navigationOptions = { header: null }
@@ -92,7 +125,7 @@ export default class SignUp extends React.Component {
                         title = 'Create Account'
                         backgroundColor='#3CAFAB'
                         borderRadius={10}
-                        onPress = {() => this.signUpUser(this.state.email, this.state.password)}/>
+                        onPress = {() => this.signUpUser()}/>
                     <Text style={styles.goBackButton}
                         activeOpacity={0.75}
                         onPress = {() => this.props.navigation.goBack()}>
