@@ -21,16 +21,6 @@ export default class Login extends React.Component {
         }
     }
 
-    componentWillMount(){
-        const firebaseConfig = {
-            apiKey: 'AIzaSyAiCNhRbXsyyD_r5uyGeNHaHcPH5W3_VAM',
-            authDomain: 'help-the-kelp.firebaseapp.com',
-        }
-        if (!firebase.apps.length) {
-            firebase.initializeApp(firebaseConfig);
-        }
-    }
-
     loginUser = (email, password, navigate) => {
         try{
             firebase.auth().signInWithEmailAndPassword(email, password)

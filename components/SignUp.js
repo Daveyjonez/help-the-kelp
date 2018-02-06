@@ -25,19 +25,6 @@ export default class SignUp extends React.Component {
     }
 
     signUpUser = () => {
-
-        var databaseApp = null;
-
-        const datafirebaseConfig = {
-            apiKey: 'AIzaSyAiCNhRbXsyyD_r5uyGeNHaHcPH5W3_VAM',
-            authDomain: 'help-the-kelp.firebaseapp.com',
-            databaseURL: 'https://help-the-kelp.firebaseio.com/',
-        }
-        if (!databaseApp) {
-            console.log('INITIALIZING FIREBASE APP...');
-            var databaseApp = firebase.initializeApp(datafirebaseConfig, 'database');
-        }
-
         try{
             if(this.state.password.length < 6){
                 alert('Please use at least 6 characters for your password')
@@ -45,39 +32,51 @@ export default class SignUp extends React.Component {
             }
             if(this.state.password === this.state.confirmPassword){
                 console.log('CREATING USER...');
-                databaseApp.auth().createUserWithEmailAndPassword(this.state.email, this.state.password);
-                databaseApp.auth().onAuthStateChanged(function(user) {
-                    if (user) {
-                        console.log('WRITING TO DATABASE...');
-                        this.writeUserData(databaseApp, user, this.state.email, this.state.firstName, this.state.lastName);
-                    }
-                    else {
-                        alert('Something went wrong. Please try again.');
-                        return;
-                    }
-                });
+                firebase.auth().createUserWithEmailAndPassword(this.state.email, this.state.password).then( response => {
+                    console.log('SIGNING IN...');
+                    firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password)
+
+                    let state = this.state;
+                    firebase.auth().onAuthStateChanged((user) => {
+                        if (user) {
+                            console.log('WRITING TO DATABASE...');
+                            this.writeUserData(user, this.state.email, this.state.firstName, this.state.lastName);
+                        }
+                        else {
+                            alert('Something went wrong. Please try again.');
+                            return;
+                        }
+                    });
+                })
             }
             else{
                 alert('Passwords do not match');
                 return;
             }
-            databaseApp.auth().signInWithEmailAndPassword(this.state.email, this.state.password)
+            let email = this.state.email;
+            console.log('NAVIGATING TO DASHBOARD')
+            this.props.navigation.navigate('Dashboard', {email});
         }
-        catch (error){
+        catch(error){
             console.log(error.toString());
         }
     }
 
-    writeUserData = (databaseApp, user, email, first, last) => {
+    writeUserData = (user, email, first, last) => {
         console.log('ADDING USER ' + user.uid)
-        databaseApp.database().ref('users/' + user.uid).set({
-            email: email,
-            first: first,
-            last: last,
-            profile_picture: null,
-            pounds: 0,
-            cleanups: 0,
-        });
+        try{
+            firebase.database().ref('users/' + user.uid).set({
+                email: email,
+                first: first,
+                last: last,
+                profilePicture: null,
+                pounds: 0,
+                cleanups: 0,
+            });
+        }
+        catch(error){
+            console.log(error.toString());
+        }
         console.log('WRITE COMPLETE')
         //navigate to dashboard
     }
@@ -123,7 +122,7 @@ export default class SignUp extends React.Component {
 
                     <Button style={styles.loginScreenButtons}
                         title = 'Create Account'
-                        backgroundColor='#3CAFAB'
+                        backgroundColor={seaFoamGreen}
                         borderRadius={10}
                         onPress = {() => this.signUpUser()}/>
                     <Text style={styles.goBackButton}

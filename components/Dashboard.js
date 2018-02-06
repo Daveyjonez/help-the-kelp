@@ -15,22 +15,15 @@ export default class Dashboard extends React.Component {
         }
     }
 
-    componentWillMount(){
-        firebase.auth().onAuthStateChanged(function(user) {
-          if (user) {
-            // User is signed in.
-            console.log('User signed in')
-            console.log(user)
-          } else {
-            // No user is signed in.
-            console.log('No user signed in')
-          }
-        });
+    viewProfile = () => {
+        console.log()
+        this.props.navigation.navigate('Profile');
     }
 
-    viewProfile = (email, navigation) => {
-        console.log(email)
-        navigation.navigate('Profile', {email});
+    viewEvent = (title) => {
+        console.log('NAVIGATING TO PAGE FOR...')
+        console.log(title)
+        this.props.navigation.navigate('EventPage');
     }
 
     signOutUser = () => {
@@ -53,7 +46,7 @@ export default class Dashboard extends React.Component {
            name='account-circle'
            type='material-community'
            iconStyle={styles.headerLeft}
-           onPress={() => this.viewProfile(this.state.email, navigation)}
+           onPress={() => this.viewProfile()}
            />),
        headerTitle: (
            <Text style={styles.headerTitle}>Dashboard</Text>),
@@ -62,32 +55,38 @@ export default class Dashboard extends React.Component {
                name='plus-box'
                type='material-community'
                iconStyle={styles.headerRight}
-               onPress={() => navigation.navigate('AddEvent')}
+               onPress={() => this.props.navigation.navigate('AddEvent')}
            />),
        }
    }
 
     render(){
-
-        const{ navigate } = this.props.navigation;
-
-        console.log('DASHBOARD PROPS')
+        console.log('----------- DASHBOARD PROPS -------------')
         console.log(this.props)
+        console.log('----------- DASHBOARD STATE -------------')
+        console.log(this.state)
         return (
             <ScrollView>
-                <Text style={styles.dashboardTitle}>
-                    Upcoming Cleanups
-                </Text>
-                <EventCard
-                    imageSource='https://www.californiabeaches.com/wp-content/uploads/2014/09/scripps-pier-beach-la-jolla-bryce16-8-1000x567.jpg'
-                    title='Scripps cleanup'
-                    date='2/5/2017'
-                    location='Scripps Pier, La Jolla'
-                    onPress={() => navigate('EventPage', {title: this.state.title})}/>
-
-                <Button
-                    title = 'Sign out'
-                    onPress = {() => this.signOutUser(navigate)}/>
+                <View style={styles.container}>
+                    <Text style={styles.dashboardTitle}>
+                        Upcoming Cleanups for {this.state.email}
+                    </Text>
+                    <EventCard
+                        imageSource='https://www.californiabeaches.com/wp-content/uploads/2014/09/scripps-pier-beach-la-jolla-bryce16-8-1000x567.jpg'
+                        title='Scripps cleanup'
+                        date='2/5/2017'
+                        location='Scripps Pier, La Jolla'
+                        onPress = {() => this.viewEvent(EventCard.title)}/>
+                    <EventCard
+                        imageSource='https://www.californiabeaches.com/wp-content/uploads/2014/09/Cardiff-State-Beach-Seaside-BryceApr16-2-1000x537.jpg'
+                        title='Davids Cardiff Cleanup'
+                        date='12/5/2017'
+                        location='Cardiff-by-the-Sea'
+                        onPress = {() => this.viewEvent()}/>
+                    <Button
+                        title = 'Sign out'
+                        onPress = {() => this.signOutUser()}/>
+                </View>
             </ScrollView>
         );
     }
@@ -96,10 +95,7 @@ export default class Dashboard extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
     backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   headerLeft: {
       color: seaFoamGreen,
@@ -108,6 +104,7 @@ const styles = StyleSheet.create({
   headerTitle: {
       fontSize: 20,
       color: seaFoamGreen,
+      fontFamily: 'Helvetica-Bold',
   },
   headerRight: {
       color: seaFoamGreen,
@@ -116,6 +113,9 @@ const styles = StyleSheet.create({
   dashboardTitle: {
       fontSize: 25,
       color: seaFoamGreen,
-      paddingLeft: 10,
-  }
+      paddingLeft: 5,
+      fontFamily: 'Helvetica-Bold',
+      marginTop: 10,
+      marginBottom: 10,
+  },
 });

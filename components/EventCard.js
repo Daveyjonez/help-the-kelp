@@ -5,14 +5,18 @@ import propTypes from 'prop-types';
 
 import { seaFoamGreen } from '../assets/styles/colors';
 
-class EventCard extends React.Component {
-    render(){
-    const { onPress } = this.props;
+export default class EventCard extends React.Component {
+    constructor(props){
+        super(props)
+        this.state = {
+        }
+    }
 
+    render(){
     return (
         <TouchableOpacity
         activeOpacity={0.75}
-        onPress={() => onPress()}>
+        onPress={this.props.onPress}>
             <View style={styles.container}>
                 <View style={styles.info}>
                 <Image
@@ -41,11 +45,12 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         borderColor: 'gray',
-
+        shadowOpacity: 0.25,
+        shadowRadius: 2,
         shadowOffset: { height: 0, width: 0 },
-        marginTop: 5,
         marginLeft: 5,
         marginRight: 5,
+        marginBottom: 5,
         backgroundColor: 'white',
     },
     info: {
@@ -53,7 +58,7 @@ const styles = StyleSheet.create({
     },
     text: {
         flexDirection: 'column',
-        paddingLeft: 5,
+        paddingLeft: 3,
     },
     headerText: {
         flexDirection: 'row',
@@ -62,6 +67,7 @@ const styles = StyleSheet.create({
     titleText: {
         fontSize: 16,
         color: seaFoamGreen,
+        fontFamily: 'Helvetica-Bold',
     },
     dateText: {
         fontSize: 10,
@@ -75,5 +81,3 @@ const styles = StyleSheet.create({
         fontSize: 12,
     },
 });
-
-export default EventCard;

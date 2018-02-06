@@ -26,6 +26,7 @@ export default class App extends React.Component {
         const firebaseConfig = {
             apiKey: 'AIzaSyAiCNhRbXsyyD_r5uyGeNHaHcPH5W3_VAM',
             authDomain: 'help-the-kelp.firebaseapp.com',
+            databaseURL: 'https://help-the-kelp.firebaseio.com/',
         }
 
         if (!firebase.apps.length) {

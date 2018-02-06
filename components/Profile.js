@@ -38,9 +38,7 @@ export default class Profile extends React.Component {
     render(){
         return (
             <View style={styles.container}>
-                <Text>
-                    Welcome, {this.props.email}, to the profile page
-                </Text>
+                <Text>Welcome to the profile page for:</Text>
             </View>
         );
     }

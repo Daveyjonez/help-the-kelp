@@ -8,7 +8,6 @@ export default class EventPage extends React.Component {
     constructor(props){
         super(props)
         this.state = {
-            title: this.props.navigation.state.params.title,
         }
     }
 
@@ -17,9 +16,13 @@ export default class EventPage extends React.Component {
     }
 
     render(){
+        console.log('----------- EVENT PAGE PROPS -------------')
+        console.log(this.props)
+        console.log('----------- EVENT PAGE STATE -------------')
+        console.log(this.state)
         return (
             <View style={styles.container}>
-                <Text> This is an event page for {this.state.title} </Text>
+                <Text> This is an event page for:</Text>
             </View>
         );
     }
