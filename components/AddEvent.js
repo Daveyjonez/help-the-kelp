@@ -6,6 +6,8 @@ import { Input } from './Input';
 import MapView from 'react-native-maps';
 import DateTimePicker from 'react-native-modal-datetime-picker';
 
+import * as firebase from 'firebase';
+
 import { seaFoamGreen } from '../assets/styles/colors';
 
 export default class AddEvent extends React.Component {
@@ -13,7 +15,7 @@ export default class AddEvent extends React.Component {
         super(props)
         this.state = {
             eventTitle: '',
-            volunteers: '',
+            volunteersNeed: '',
             date: '',
             location: '',
             isDateTimePickerVisible: false,
@@ -29,8 +31,21 @@ export default class AddEvent extends React.Component {
         this._hideDateTimePicker();
     };
 
-    createEvent = () => {
-        
+    createEvent = (title, date, location, volunteersNeed) => {
+        try{
+            firebase.database().ref('events/' + user.uid).set({
+                email: email,
+                first: first,
+                last: last,
+                profilePicture: null,
+                pounds: 0,
+                cleanups: 0,
+            });
+        }
+        catch(error){
+            console.log(error.toString());
+        }
+        return;
     }
 
     static navigationOptions = ({ navigation }) => {
@@ -70,8 +85,8 @@ export default class AddEvent extends React.Component {
 
                         <Input
                             placeholder = '# of Volunteers Needed'
-                            onChangeText = {volunteers => this.setState({volunteers})}
-                            value = {this.state.volunteers}/>
+                            onChangeText = {volunteers => this.setState({volunteersNeed})}
+                            value = {this.state.volunteersNeed}/>
 
                         <Button style={styles.buttonStyle}
                             title = 'Create Event!'
