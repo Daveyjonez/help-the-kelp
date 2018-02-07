@@ -66,9 +66,9 @@ export default class Dashboard extends React.Component {
                         <EventCard
                             imageSource='https://www.californiabeaches.com/wp-content/uploads/2014/09/scripps-pier-beach-la-jolla-bryce16-8-1000x567.jpg'
                             title='Scripps cleanup'
-                            date='2/5/2017'
+                            date='Sat Feb 03 2018'
                             location='Scripps Pier, La Jolla'
-                            rsvp={22}
+                            rsvp='22/30'
                             equipment='Equipment needed'
                             time='8:30 AM'
                             onPress = {() => this.viewEvent()}/>
@@ -77,7 +77,7 @@ export default class Dashboard extends React.Component {
                             title='Davids Cardiff Cleanup'
                             date='12/15/2017'
                             location='Cardiff-by-the-Sea'
-                            rsvp={135}
+                            rsvp='100/100'
                             equipment='Equipment needed'
                             time='12:35 PM'
                             onPress = {() => this.viewEvent()}/>
@@ -86,7 +86,7 @@ export default class Dashboard extends React.Component {
                             title='Blacks Beach Cleanup'
                             date='8/25/2018'
                             location='Black Beach, San Diego'
-                            rsvp={53}
+                            rsvp='12/25'
                             equipment='Equipment needed'
                             time='10:00 AM'
                             onPress = {() => this.viewEvent()}/>

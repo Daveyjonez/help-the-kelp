@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, TouchableHighlight, TextInput, View, ScrollView } from 'react-native';
+import { Image, StyleSheet, Text, TouchableHighlight, TextInput, View, ScrollView } from 'react-native';
 import { Button } from 'react-native-elements';
 import { Icon } from 'react-native-elements';
 import { Input } from './Input';
@@ -9,43 +9,52 @@ import DateTimePicker from 'react-native-modal-datetime-picker';
 import * as firebase from 'firebase';
 
 import { seaFoamGreen } from '../assets/styles/colors';
+var placeholder = require('../assets/images/placeholder-01.png');
+
 
 export default class AddEvent extends React.Component {
     constructor(props){
         super(props)
         this.state = {
             eventTitle: '',
-            volunteersNeed: '',
+            volunteersHave: 1,
+            volunteersNeed: null,
             date: '',
+            time: '',
             location: '',
-            isDateTimePickerVisible: false,
+            isDatePickerVisible: false,
+            isTimePickerVisible: false,
         }
     }
 
-    _showDateTimePicker = () => this.setState({ isDateTimePickerVisible: true });
+    chooseImage = () => {
+        alert('Open camera roll');
+    }
 
-    _hideDateTimePicker = () => this.setState({ isDateTimePickerVisible: false });
+    _showDatePicker = () => this.setState({ isDatePickerVisible: true });
+    _hideDatePicker = () => this.setState({ isDatePickerVisible: false });
+
+    _showTimePicker = () => this.setState({ isTimePickerVisible: true });
+    _hideTimePicker = () => this.setState({ isTimePickerVisible: false });
 
     _handleDatePicked = (date) => {
         console.log('A date has been picked: ', date);
-        this._hideDateTimePicker();
+        var date = date.toString().substring(0, 15);
+        console.log(date);
+        this.setState({date})
+        this._hideDatePicker();
+    };
+
+    _handleTimePicked = (time) => {
+        console.log('A time has been picked: ', time);
+        var time = time.toString().substring(16, 21);
+        console.log(time);
+        this.setState({time})
+        this._hideTimePicker();
     };
 
     createEvent = (title, date, location, volunteersNeed) => {
-        try{
-            firebase.database().ref('events/' + user.uid).set({
-                email: email,
-                first: first,
-                last: last,
-                profilePicture: null,
-                pounds: 0,
-                cleanups: 0,
-            });
-        }
-        catch(error){
-            console.log(error.toString());
-        }
-        return;
+
     }
 
     static navigationOptions = ({ navigation }) => {
@@ -60,38 +69,55 @@ export default class AddEvent extends React.Component {
             <View style={styles.bgContainer}>
                 <ScrollView>
                     <View style={styles.fgContainer}>
+                    <TouchableHighlight
+                    onPress={() => this.chooseImage()}>
+                        <Image
+                            source={placeholder}
+                            style={{width: '100%', height: 200,}}/>
+                    </TouchableHighlight>
                     <Input
                         placeholder = 'Event Title'
                         onChangeText = {eventTitle => this.setState({eventTitle})}
                         value = {this.state.eventTitle}/>
 
                     <View style={styles.eventDetails}>
+                        <Text style={styles.eventText}>{this.state.date}</Text>
                         <Button style={styles.buttonStyle}
-                            title = 'Choose Date'
+                            title='Choose date'
                             backgroundColor={seaFoamGreen}
                             borderRadius={10}
-                            onPress = {this._showDateTimePicker}/>
-
-                        <Button style={styles.buttonStyle}
-                            title = 'Choose Time'
-                            backgroundColor={seaFoamGreen}
-                            borderRadius={10}
-                            onPress = {this._showDateTimePicker}/>
-
+                            onPress={this._showDatePicker}/>
                         <DateTimePicker
-                            isVisible={this.state.isDateTimePickerVisible}
+                            isVisible={this.state.isDatePickerVisible}
                             onConfirm={this._handleDatePicked}
-                            onCancel={this._hideDateTimePicker}/>
+                            onCancel={this._hideDatePicker}
+                            mode={'date'}/>
+
+                        <Text style={styles.eventText}>{this.state.time}</Text>
+                        <Button style={styles.buttonStyle}
+                            title='Choose time'
+                            backgroundColor={seaFoamGreen}
+                            borderRadius={10}
+                            onPress={this._showTimePicker}/>
+                        <DateTimePicker
+                            isVisible={this.state.isTimePickerVisible}
+                            onConfirm={this._handleTimePicked}
+                            onCancel={this._hideTimePicker}
+                            mode={'time'}
+                            is24Hour={false}/>
+                        <Text style={styles.detailText}>Remember to use correct timezone of location</Text>
+
 
                         <Input
                             placeholder = '# of Volunteers Needed'
-                            onChangeText = {volunteers => this.setState({volunteersNeed})}
+                            onChangeText = {volunteersNeed => this.setState({volunteersNeed})}
                             value = {this.state.volunteersNeed}/>
 
                         <Button style={styles.buttonStyle}
-                            title = 'Create Event!'
+                            title = 'Create Event'
                             backgroundColor={seaFoamGreen}
                             borderRadius={10}
+                            icon={{name: 'check-circle', type: 'material-community'}}
                             onPress = {this.createEvent()}/>
                     </View>
                 </View>
@@ -105,11 +131,12 @@ const styles = StyleSheet.create({
     bgContainer: {
         flex: 1,
         backgroundColor: '#fff',
-        alignItems: 'center',
+        alignItems: 'stretch',
         flexDirection: 'column',
     },
     fgContainer: {
-        marginTop: 10,
+        alignItems: 'stretch',
+        flexDirection: 'column',
     },
   container: {
       flex: 1,
@@ -124,10 +151,22 @@ const styles = StyleSheet.create({
       fontFamily: 'Helvetica-Bold',
   },
   buttonStyle: {
-      paddingTop: 20,
+      paddingTop: 10,
       width: 300,
   },
   eventDetails: {
+      alignItems: 'center',
+      flexDirection: 'column',
+  },
+  eventText: {
+      fontSize: 20,
+      color: '#969696',
+      marginTop: 20,
+  },
+  detailText: {
+      fontSize: 10,
+      fontStyle: 'italic',
+      color: '#969696',
   },
   completeButton: {
       flexDirection: 'column',

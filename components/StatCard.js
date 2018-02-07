@@ -62,7 +62,7 @@ const styles = StyleSheet.create({
         shadowOffset: { height: 0, width: 0 },
         marginLeft: 5,
         marginRight: 5,
-        marginBottom: 10,
+        marginBottom: 15,
         width: width-10,
     },
     header: {
