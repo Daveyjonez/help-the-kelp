@@ -31,15 +31,12 @@ export default class SignUp extends React.Component {
                 return;
             }
             if(this.state.password === this.state.confirmPassword){
-                console.log('CREATING USER...');
                 firebase.auth().createUserWithEmailAndPassword(this.state.email, this.state.password).then( response => {
-                    console.log('SIGNING IN...');
                     firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password)
 
                     let state = this.state;
                     firebase.auth().onAuthStateChanged((user) => {
                         if (user) {
-                            console.log('WRITING TO DATABASE...');
                             this.writeUserData(user, this.state.email, this.state.firstName, this.state.lastName);
                         }
                         else {
@@ -54,7 +51,6 @@ export default class SignUp extends React.Component {
                 return;
             }
             let email = this.state.email;
-            console.log('NAVIGATING TO DASHBOARD')
             this.props.navigation.navigate('Dashboard', {email});
         }
         catch(error){
@@ -63,7 +59,6 @@ export default class SignUp extends React.Component {
     }
 
     writeUserData = (user, email, first, last) => {
-        console.log('ADDING USER ' + user.uid)
         try{
             firebase.database().ref('users/' + user.uid).set({
                 email: email,
@@ -77,8 +72,7 @@ export default class SignUp extends React.Component {
         catch(error){
             console.log(error.toString());
         }
-        console.log('WRITE COMPLETE')
-        //navigate to dashboard
+        return;
     }
 
     static navigationOptions = { header: null }

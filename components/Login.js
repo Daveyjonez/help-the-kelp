@@ -5,7 +5,7 @@ import { Button } from 'react-native-elements';
 import { Input } from './Input';
 import Dashboard from './Dashboard';
 
-import seaFoamGreen from '../assets/styles/colors';
+import { seaFoamGreen } from '../assets/styles/colors';
 
 import * as firebase from 'firebase';
 
@@ -35,7 +35,7 @@ export default class Login extends React.Component {
         }
     }
 
-    static navigationOptions = { header: null }
+    static navigationOptions = { header: null, gesturesEnabled: false }
 
     render() {
         const{ navigate } = this.props.navigation;
@@ -58,15 +58,15 @@ export default class Login extends React.Component {
                         onChangeText = {password => this.setState({password})}
                         value = {this.state.password}
                     />
-                    <Button style={styles.loginScreenButtons}
+                    <Button style={styles.buttonStyle}
                         title = 'Log in'
-                        backgroundColor='#3CAFAB'
+                        backgroundColor={seaFoamGreen}
                         borderRadius={10}
                         onPress = {() => this.loginUser(this.state.email, this.state.password, navigate)}/>
 
-                    <Button style={styles.loginScreenButtons}
+                    <Button style={styles.buttonStyle}
                         title = 'Sign up'
-                        backgroundColor='#3CAFAB'
+                        backgroundColor={seaFoamGreen}
                         borderRadius={10}
                         onPress = {() => navigate('SignUp')}/>
                 </KeyboardAvoidingView>
@@ -82,8 +82,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
     },
-    loginScreenButtons: {
+    buttonStyle: {
         paddingTop: 20,
         width: 300,
-    }
+    },
 });

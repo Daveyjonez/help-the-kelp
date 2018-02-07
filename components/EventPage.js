@@ -1,7 +1,7 @@
 import React from 'react';
-import { StyleSheet, Text, TextInput, Button, View, ScrollView } from 'react-native';
+import { StyleSheet, Text, TextInput, View, ScrollView } from 'react-native';
 import { Icon } from 'react-native-elements';
-
+import { Button } from 'react-native-elements';
 import { seaFoamGreen } from '../assets/styles/colors';
 
 export default class EventPage extends React.Component {
@@ -23,6 +23,10 @@ export default class EventPage extends React.Component {
         return (
             <View style={styles.container}>
                 <Text> This is an event page for:</Text>
+                <Button style={styles.buttonStyle}
+                    title = 'RSVP'
+                    backgroundColor={seaFoamGreen}
+                    borderRadius={10}/>
             </View>
         );
     }
@@ -39,5 +43,9 @@ const styles = StyleSheet.create({
     headerLeft: {
         color: seaFoamGreen,
         paddingLeft: 20,
+    },
+    buttonStyle: {
+        paddingTop: 20,
+        width: 300,
     },
 });

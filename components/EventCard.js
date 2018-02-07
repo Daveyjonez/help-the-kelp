@@ -2,8 +2,13 @@ import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, TextInput, View, Image } from 'react-native';
 import { StackNavigator } from 'react-navigation';
 import propTypes from 'prop-types';
+import { Icon } from 'react-native-elements';
 
 import { seaFoamGreen } from '../assets/styles/colors';
+
+const Dimensions = require('Dimensions');
+const window = Dimensions.get('window');
+const imageWidth = window.width;
 
 export default class EventCard extends React.Component {
     constructor(props){
@@ -15,20 +20,47 @@ export default class EventCard extends React.Component {
     render(){
     return (
         <TouchableOpacity
-        activeOpacity={0.75}
-        onPress={this.props.onPress}>
-            <View style={styles.container}>
+            activeOpacity={0.75}
+            onPress={this.props.onPress}>
+            <View style={styles.cardContainer}>
                 <View style={styles.info}>
-                <Image
-                    style={{width: 100, height: 100, borderTopLeftRadius: 5, borderTopRightRadius: 5}}
-                    source={{uri: this.props.imageSource}}/>
                     <View style={styles.text}>
-                        <View style={styles.headerText}>
-                            <Text style={styles.titleText}> {this.props.title} </Text>
-                            <Text style={styles.dateText}> {this.props.date} </Text>
+                        <View style={styles.header}>
+                            <Text style={styles.titleText}> {this.props.title}</Text>
+                            <Text style={styles.dateText}> {this.props.date}</Text>
                         </View>
-                        <Text style={styles.locationText}> {this.props.location} </Text>
+                        <Text style={styles.locationText}> {this.props.location}</Text>
                     </View>
+                    <View style={styles.iconRow}>
+                        <View style={styles.iconPair}>
+                            <Icon
+                                name='account-multiple'
+                                type='material-community'
+                                iconStyle={styles.rsvp}/>
+                            <Text style={styles.iconText}> {this.props.rsvp}</Text>
+                        </View>
+
+                        <View style={styles.iconPair}>
+                            <Icon
+                                name='alert-box'
+                                type='material-community'
+                                iconStyle={styles.equipment}/>
+                            <Text style={styles.iconText}> {this.props.equipment}</Text>
+                        </View>
+
+                        <View style={styles.iconPair}>
+                            <Icon
+                                name='clock'
+                                type='material-community'
+                                iconStyle={styles.time}/>
+                            <Text style={styles.iconText}> {this.props.time}</Text>
+                        </View>
+                    </View>
+                </View>
+                <View style={styles.imageView}>
+                    <Image
+                        style={{width: imageWidth-10, height: 100}}
+                        source={{uri: this.props.imageSource}}/>
                 </View>
             </View>
         </TouchableOpacity>
@@ -41,43 +73,83 @@ EventCard.propTypes = {
 };
 
 const styles = StyleSheet.create({
-    container: {
-        flexDirection: 'row',
+    cardContainer: {
+        flexDirection: 'column',
         justifyContent: 'space-between',
         borderColor: 'gray',
-        shadowOpacity: 0.25,
-        shadowRadius: 2,
+        borderRadius: 10,
+        backgroundColor: 'white',
+        shadowOpacity: 0.35,
+        shadowColor: '#3CAFAB',
+        shadowRadius: 5,
         shadowOffset: { height: 0, width: 0 },
         marginLeft: 5,
         marginRight: 5,
-        marginBottom: 5,
-        backgroundColor: 'white',
+        marginBottom: 10,
     },
     info: {
-        flexDirection: 'row',
+        flexDirection: 'column',
     },
     text: {
         flexDirection: 'column',
         paddingLeft: 3,
+        paddingBottom: 10,
     },
-    headerText: {
+    header: {
         flexDirection: 'row',
-        alignContent: 'flex-end',
+        justifyContent: 'space-between',
+        alignItems: 'flex-end',
+        marginTop: 5,
     },
     titleText: {
-        fontSize: 16,
+        fontSize: 18,
         color: seaFoamGreen,
         fontFamily: 'Helvetica-Bold',
     },
     dateText: {
-        fontSize: 10,
-        color: '#c1c1c1',
+        fontSize: 12,
+        marginBottom: 5,
+        marginRight: 5,
+        color: '#969696',
     },
     locationText: {
         fontSize: 12,
         fontStyle: 'italic',
+        color: '#969696',
     },
-    weatherText: {
+    imageView: {
+        borderTopLeftRadius: 0,
+        borderTopRightRadius: 0,
+        borderBottomLeftRadius: 10,
+        borderBottomRightRadius: 10,
+        overflow: 'hidden',
+        width: imageWidth-10,
+        height: 100,
+    },
+    iconRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        backgroundColor: '#f9f9f9',
+        paddingLeft: 35,
+        paddingRight: 35,
+        paddingTop: 15,
+        paddingBottom: 15,
+    },
+    iconPair: {
+        flexDirection: 'column',
+        alignItems: 'center',
+    },
+    iconText: {
         fontSize: 12,
+        color: '#969696',
     },
+    rsvp: {
+        color: '#60c5ff',
+    },
+    equipment: {
+        color: '#ffb032',
+    },
+    time: {
+        color: '#d67cf9',
+    }
 });
