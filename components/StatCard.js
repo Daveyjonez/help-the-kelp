@@ -3,7 +3,7 @@ import { StyleSheet, Text, TouchableOpacity, TextInput, View, Image } from 'reac
 import { StackNavigator } from 'react-navigation';
 import propTypes from 'prop-types';
 import { Icon } from 'react-native-elements';
-
+import Stat from './Stat';
 import { seaFoamGreen } from '../assets/styles/colors';
 
 const Dimensions = require('Dimensions');
@@ -21,29 +21,46 @@ export default class StatCard extends React.Component {
         return (
             <View style={styles.cardContainer}>
                 <Text style={styles.titleText}>{this.props.title}</Text>
-                <View style={styles.iconRow}>
-                    <View style={styles.iconPair}>
-                        <Icon
-                            name='weight'
-                            type='material-community'
-                            iconStyle={styles.pounds}/>
-                        <Text style={styles.iconText}> {this.props.pounds}</Text>
+                    <View style={styles.iconRow}>
+                        <Stat
+                            numText='36'
+                            titleText='Bags of recyclables'
+                            iconName='recycle'
+                            iconType='material-community'
+                            iconColor='#30db99'/>
+                        <Stat
+                            numText='42'
+                            titleText='Bags of trash'
+                            iconName='delete'
+                            iconType='material-community'
+                            iconColor='gray'/>
+                        <Stat
+                            numText='8'
+                            titleText='Cleanups attended'
+                            iconName='worker'
+                            iconType='material-community'
+                            iconColor='#d775ef'/>
                     </View>
-                    <View style={styles.iconPair}>
-                        <Icon
-                            name='food-fork-drink'
-                            type='material-community'
-                            iconStyle={styles.bottles}/>
-                        <Text style={styles.iconText}> {this.props.bottles}</Text>
+                    <View style={styles.iconRow}>
+                        <Stat
+                            numText='2'
+                            titleText='Events hosted'
+                            iconName='clipboard-text'
+                            iconType='material-community'
+                            iconColor='#ffb032'/>
+                        <Stat
+                            numText='3'
+                            titleText='Different locations'
+                            iconName='map-marker'
+                            iconType='material-community'
+                            iconColor='#e23f52'/>
+                        <Stat
+                            numText='21'
+                            titleText='Miles cleaned'
+                            iconName='walk'
+                            iconType='material-community'
+                            iconColor='#50a7e5'/>
                     </View>
-                    <View style={styles.iconPair}>
-                        <Icon
-                            name='worker'
-                            type='material-community'
-                            iconStyle={styles.cleanups}/>
-                        <Text style={styles.iconText}> {this.props.cleanups}</Text>
-                    </View>
-                </View>
             </View>
         );
     }
@@ -52,14 +69,14 @@ export default class StatCard extends React.Component {
 const styles = StyleSheet.create({
     cardContainer: {
         flexDirection: 'column',
-        justifyContent: 'space-between',
-        borderColor: 'gray',
         borderRadius: 10,
         backgroundColor: 'white',
+
         shadowOpacity: 0.35,
         shadowColor: '#3CAFAB',
         shadowRadius: 5,
         shadowOffset: { height: 0, width: 0 },
+
         marginLeft: 5,
         marginRight: 5,
         marginBottom: 15,
@@ -72,34 +89,20 @@ const styles = StyleSheet.create({
         marginTop: 5,
     },
     titleText: {
-        fontSize: 18,
+        fontSize: 30,
         color: seaFoamGreen,
         fontFamily: 'Helvetica-Bold',
+        marginTop: 5,
+        marginLeft: 10,
+        marginBottom: 5,
     },
     iconRow: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         backgroundColor: '#f9f9f9',
-        paddingLeft: 35,
-        paddingRight: 35,
+        paddingLeft: 20,
+        paddingRight: 20,
         paddingTop: 15,
         paddingBottom: 15,
     },
-    iconPair: {
-        flexDirection: 'column',
-        alignItems: 'center',
-    },
-    iconText: {
-        fontSize: 12,
-        color: '#969696',
-    },
-    pounds: {
-        color: '#60c5ff',
-    },
-    bottles: {
-        color: '#ffb032',
-    },
-    cleanups: {
-        color: '#d67cf9',
-    }
 });

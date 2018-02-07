@@ -1,6 +1,5 @@
 import React from 'react';
 import { StackNavigator } from 'react-navigation';
-import { Font } from 'expo';
 
 import * as firebase from 'firebase';
 

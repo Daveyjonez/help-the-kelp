@@ -1,5 +1,9 @@
 import React from 'react';
-import { StyleSheet, Text, View, KeyboardAvoidingView, ImageBackground } from 'react-native';
+import { ImageBackground,
+        KeyboardAvoidingView,
+        StyleSheet,
+        Text,
+        View } from 'react-native';
 import { StackNavigator } from 'react-navigation';
 import { Button } from 'react-native-elements';
 import { Input } from './Input';

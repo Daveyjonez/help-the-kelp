@@ -1,5 +1,10 @@
 import React from 'react';
-import { Image, ScrollView, StyleSheet, Text, TextInput, View} from 'react-native';
+import { Image,
+        ScrollView,
+        StyleSheet,
+        Text,
+        TouchableHighlight,
+        View} from 'react-native';
 import { Button, Icon } from 'react-native-elements';
 import StatCard from './StatCard';
 
@@ -16,6 +21,14 @@ export default class Profile extends React.Component {
         }
     }
 
+    chooseImage = () => {
+
+    }
+
+    updateStats = () => {
+
+    }
+
     logOut = () => {
         firebase.auth().signOut().then(function() {
             }, function(error) {
@@ -27,7 +40,7 @@ export default class Profile extends React.Component {
     static navigationOptions = ({ navigation }) => {
         return {
             headerTintColor: seaFoamGreen,
-            headerTitle: (<Text style={styles.headerTitle}>Your Profile</Text>),
+            headerTitle: (<Text style={styles.headerTitle}>{"David's Profile"}</Text>),
         }
     }
 
@@ -37,17 +50,25 @@ export default class Profile extends React.Component {
                 <ScrollView>
                     <View style={styles.fgContainer}>
                         <View style={styles.profileContainer}>
-                            <Image style={styles.profileImg}
+                            <TouchableHighlight
+                                onPress={() => this.chooseImage()}>
+                                <Image style={styles.profileImg}
                                 source={profilePhoto}/>
+                            </TouchableHighlight>
                         </View>
 
                         <View style={styles.stats}>
                             <StatCard
-                                title='Stats'
+                                title='Your stats'
                                 pounds={138}
                                 bottles={42}
                                 cleanups={5}/>
                         </View>
+                        <Button style={styles.buttonStyle}
+                            title = 'Update stats'
+                            backgroundColor={seaFoamGreen}
+                            borderRadius={10}
+                            onPress= {() => this.updateStats()}/>
                         <Button style={styles.buttonStyle}
                             title = 'Log out'
                             backgroundColor='#f44242'
@@ -69,31 +90,22 @@ const styles = StyleSheet.create({
     },
     fgContainer: {
       marginTop: 10,
-    },
-    container: {
-        flex: 1,
-        padding: 20,
-        backgroundColor: '#fff',
+      alignItems: 'center',
     },
     headerTitle: {
         fontSize: 20,
         color: seaFoamGreen,
         fontFamily: 'Helvetica-Bold',
     },
-    stats: {
-        alignItems: 'center',
-        flexDirection: 'column',
-    },
     profileContainer: {
         alignItems: 'center',
         height: 310,
         width: 310,
         borderRadius: 155,
+
+
         paddingTop: 5,
-        shadowOpacity: 0.35,
-        shadowColor: '#3CAFAB',
-        shadowRadius: 5,
-        shadowOffset: { height: 0, width: 0 },
+        marginBottom: 10,
     },
     profileImg: {
         height: 300,
@@ -101,9 +113,13 @@ const styles = StyleSheet.create({
         width: 300,
         paddingTop: 20,
     },
+    stats: {
+        alignItems: 'center',
+        flexDirection: 'column',
+    },
     buttonStyle: {
         paddingTop: 20,
-        width: 100,
+        width: 300,
     },
     dataNum: {
         fontSize: 50,

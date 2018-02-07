@@ -1,5 +1,9 @@
 import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, TextInput, View, Image } from 'react-native';
+import { Image,
+        StyleSheet,
+        Text,
+        TouchableOpacity,
+        View } from 'react-native';
 import { StackNavigator } from 'react-navigation';
 import propTypes from 'prop-types';
 import { Icon } from 'react-native-elements';

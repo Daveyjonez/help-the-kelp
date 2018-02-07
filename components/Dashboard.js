@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, TextInput, Button, View, ScrollView } from 'react-native';
+import { Button, ScrollView, StyleSheet, Text, View} from 'react-native';
 import { Icon } from 'react-native-elements';
 import EventCard from './EventCard';
 
@@ -9,17 +9,18 @@ export default class Dashboard extends React.Component {
     constructor(props){
         super(props)
         this.state = {
-            email: this.props.navigation.state.params.email,
         }
     }
 
+    componentWillMount = () => {
+
+    }
+
     viewProfile = () => {
-        console.log()
         this.props.navigation.navigate('Profile', );
     }
 
     viewEvent = () => {
-        console.log('---------- EVENT PAGE STATE -----------')
         this.props.navigation.navigate('EventPage');
     }
 
@@ -55,10 +56,6 @@ export default class Dashboard extends React.Component {
    }
 
     render(){
-        console.log('----------- DASHBOARD PROPS -------------')
-        console.log(this.props)
-        console.log('----------- DASHBOARD STATE -------------')
-        console.log(this.state)
         return (
             <View style={styles.bgContainer}>
                 <ScrollView>
