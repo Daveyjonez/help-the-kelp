@@ -48,7 +48,7 @@ export default class AddEvent extends React.Component {
                 time: this.state.time,
                 location: this.state.location,
                 volunteersHave: this.state.volunteersHave,
-                volunteersNeed: this.state.volunteersNeed,
+                volunteersNeed: Number(this.state.volunteersNeed),
                 haveEquipment: this.state.haveEquipment,
             });
         }

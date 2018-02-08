@@ -41,7 +41,7 @@ export default class EventCard extends React.Component {
                                 name='account-multiple'
                                 type='material-community'
                                 iconStyle={styles.rsvp}/>
-                            <Text style={styles.iconText}> {this.props.rsvp}</Text>
+                            <Text style={styles.iconText}> {this.props.volunteersHave}/{this.props.volunteersNeed}</Text>
                         </View>
 
                         <View style={styles.iconPair}>
@@ -73,7 +73,6 @@ export default class EventCard extends React.Component {
 }
 
 EventCard.propTypes = {
-    onPress: propTypes.func.isRequired
 };
 
 const styles = StyleSheet.create({

@@ -44,7 +44,7 @@ export default class StatCard extends React.Component {
                     <View style={styles.iconRow}>
                         <Stat
                             numText='2'
-                            titleText='Events hosted'
+                            titleText='Cleanups hosted'
                             iconName='clipboard-text'
                             iconType='material-community'
                             iconColor='#ffb032'/>

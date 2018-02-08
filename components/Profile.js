@@ -68,6 +68,7 @@ export default class Profile extends React.Component {
                             title = 'Update stats'
                             backgroundColor={seaFoamGreen}
                             borderRadius={10}
+                            icon={{name: 'emoticon-happy', type: 'material-community'}}
                             onPress= {() => this.updateStats()}/>
                         <Button style={styles.buttonStyle}
                             title = 'Log out'
