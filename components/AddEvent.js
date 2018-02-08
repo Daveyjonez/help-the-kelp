@@ -6,8 +6,9 @@ import { Image,
             Text,
             TouchableHighlight,
             View } from 'react-native';
-import { Button } from 'react-native-elements';
-import { Icon } from 'react-native-elements';
+import { Button,
+         CheckBox,
+         Icon } from 'react-native-elements';
 import { Input } from './Input';
 import MapView from 'react-native-maps';
 import DateTimePicker from 'react-native-modal-datetime-picker';
@@ -24,14 +25,15 @@ export default class AddEvent extends React.Component {
         this.state = {
             title: '',
             host: '',
-            date: '',
-            time: '',
+            rawDate: '',
+            date: 'No date set',
+            time: '00:00',
             location: '',
 
             volunteersHave: 1,
             volunteersNeed: null,
 
-            haveEquipment: false,
+            equipment: false,
 
             isDatePickerVisible: false,
             isTimePickerVisible: false,
@@ -39,45 +41,58 @@ export default class AddEvent extends React.Component {
     }
 
     createEvent = () => {
-        try{
-            var newEventKey = firebase.database().ref().child('events').push().key;
-            firebase.database().ref('events/' + newEventKey).set({
-                title: this.state.title,
-                host: this.state.host,
-                date: this.state.date,
-                time: this.state.time,
-                location: this.state.location,
-                volunteersHave: this.state.volunteersHave,
-                volunteersNeed: Number(this.state.volunteersNeed),
-                haveEquipment: this.state.haveEquipment,
-            });
+        if(this.state.host && this.state.title && this.state.rawDate && this.state.date
+         && this.state.time && this.state.volunteersNeed) {
+            try{
+                var newEventKey = firebase.database().ref().child('events').push().key;
+                firebase.database().ref('events/' + newEventKey).set({
+                    title: this.state.title,
+                    host: this.state.host,
+                    rawDate: this.state.rawDate,
+                    date: this.state.date,
+                    time: this.state.time,
+                    location: this.state.location,
+                    volunteersHave: this.state.volunteersHave,
+                    volunteersNeed: Number(this.state.volunteersNeed),
+                    equipment: this.state.equipment,
+                });
+            }
+            catch(error){
+                console.log(error.toString());
+            }
+            alert('Event successfully created!')
+            this.props.navigation.navigate('Dashboard');
+            return;
         }
-        catch(error){
-            console.log(error.toString());
+        else{
+            alert('Please complete all forms');
+            return;
         }
-        this.props.navigation.navigate('Dashboard');
-        return;
     }
 
     chooseImage = () => {
     }
 
-    _showDatePicker = () => this.setState({ isDatePickerVisible: true });
-    _hideDatePicker = () => this.setState({ isDatePickerVisible: false });
+    changeEquipment = () => this.setState({equipment: !this.state.equipment});
 
-    _showTimePicker = () => this.setState({ isTimePickerVisible: true });
-    _hideTimePicker = () => this.setState({ isTimePickerVisible: false });
+    showDatePicker = () => this.setState({ isDatePickerVisible: true });
+    hideDatePicker = () => this.setState({ isDatePickerVisible: false });
 
-    _handleDatePicked = (date) => {
+    showTimePicker = () => this.setState({ isTimePickerVisible: true });
+    hideTimePicker = () => this.setState({ isTimePickerVisible: false });
+
+    handleDatePicked = (date) => {
+        var rawDate = date.toString();
         var date = date.toString().substring(0, 15);
+        this.setState({rawDate})
         this.setState({date})
-        this._hideDatePicker();
+        this.hideDatePicker();
     };
 
-    _handleTimePicked = (time) => {
+    handleTimePicked = (time) => {
         var time = time.toString().substring(16, 21);
         this.setState({time})
-        this._hideTimePicker();
+        this.hideTimePicker();
     };
 
     static navigationOptions = ({ navigation }) => {
@@ -109,16 +124,21 @@ export default class AddEvent extends React.Component {
                             onChangeText = {host => this.setState({host})}
                             value = {this.state.host}/>
 
+                        <Input
+                            placeholder = 'Location'
+                            onChangeText = {location => this.setState({location})}
+                            value = {this.state.location}/>
+
                         <Text style={styles.eventText}>{this.state.date}</Text>
                         <Button style={styles.buttonStyle}
                             title='Choose date'
                             backgroundColor={seaFoamGreen}
                             borderRadius={10}
-                            onPress={this._showDatePicker}/>
+                            onPress={this.showDatePicker}/>
                         <DateTimePicker
                             isVisible={this.state.isDatePickerVisible}
-                            onConfirm={this._handleDatePicked}
-                            onCancel={this._hideDatePicker}
+                            onConfirm={this.handleDatePicked}
+                            onCancel={this.hideDatePicker}
                             mode={'date'}/>
 
                         <Text style={styles.eventText}>{this.state.time}</Text>
@@ -126,12 +146,12 @@ export default class AddEvent extends React.Component {
                             title='Choose time (24 hr)'
                             backgroundColor={seaFoamGreen}
                             borderRadius={10}
-                            onPress={this._showTimePicker}
+                            onPress={this.showTimePicker}
                             is24Hour={true}/>
                         <DateTimePicker
                             isVisible={this.state.isTimePickerVisible}
-                            onConfirm={this._handleTimePicked}
-                            onCancel={this._hideTimePicker}
+                            onConfirm={this.handleTimePicked}
+                            onCancel={this.hideTimePicker}
                             mode={'time'}
                             is24Hour={false}/>
                         <Text style={styles.detailText}>Remember to use correct timezone of location</Text>
@@ -142,7 +162,16 @@ export default class AddEvent extends React.Component {
                             onChangeText = {volunteersNeed => this.setState({volunteersNeed})}
                             value = {this.state.volunteersNeed}/>
 
+                        <Text style={styles.eventText}>{this.state.equipment?'Yes!':'No'}</Text>
                         <Button style={styles.buttonStyle}
+                            title='Is equipment provided?'
+                            backgroundColor={seaFoamGreen}
+                            borderRadius={10}
+                            onPress={this.changeEquipment}/>
+                        <Text style={styles.detailText}>Trash bags, gloves, grabbers, buckets, etc.</Text>
+
+
+                        <Button style={styles.createButtonStyle}
                             title = 'Create Event'
                             backgroundColor={seaFoamGreen}
                             borderRadius={10}
@@ -181,6 +210,11 @@ const styles = StyleSheet.create({
   },
   buttonStyle: {
       paddingTop: 10,
+      width: 300,
+  },
+  createButtonStyle: {
+      paddingTop: 30,
+      marginBottom: 50,
       width: 300,
   },
   eventDetails: {

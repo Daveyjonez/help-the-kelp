@@ -30,10 +30,10 @@ export default class EventCard extends React.Component {
                 <View style={styles.info}>
                     <View style={styles.text}>
                         <View style={styles.header}>
-                            <Text style={styles.titleText}> {this.props.title}</Text>
-                            <Text style={styles.dateText}> {this.props.date}</Text>
+                            <Text style={styles.titleText}>{this.props.title}</Text>
+                            <Text style={styles.dateText}>{this.props.date}</Text>
                         </View>
-                        <Text style={styles.locationText}> {this.props.location}</Text>
+                        <Text style={styles.locationText}>{this.props.location}</Text>
                     </View>
                     <View style={styles.iconRow}>
                         <View style={styles.iconPair}>
@@ -46,10 +46,10 @@ export default class EventCard extends React.Component {
 
                         <View style={styles.iconPair}>
                             <Icon
-                                name='alert-box'
+                                name={this.props.equipment?'checkbox-marked':'alert-box'}
                                 type='material-community'
-                                iconStyle={styles.equipment}/>
-                            <Text style={styles.iconText}> {this.props.equipment}</Text>
+                                iconStyle={this.props.equipment?styles.equipment:styles.noEquipment}/>
+                            <Text style={styles.iconText}>{this.props.equipment?'Equipment provided':'Equipment needed!'}</Text>
                         </View>
 
                         <View style={styles.iconPair}>
@@ -57,14 +57,14 @@ export default class EventCard extends React.Component {
                                 name='clock'
                                 type='material-community'
                                 iconStyle={styles.time}/>
-                            <Text style={styles.iconText}> {this.props.time}</Text>
+                            <Text style={styles.iconText}>{this.props.time}</Text>
                         </View>
                     </View>
                 </View>
                 <View style={styles.imageView}>
                     <Image
                         style={{width: imageWidth-10, height: 100}}
-                        source={{uri: this.props.imageSource}}/>
+                        source={this.props.imageSource}/>
                 </View>
             </View>
         </TouchableOpacity>
@@ -84,7 +84,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         shadowOpacity: 0.35,
         shadowColor: '#3CAFAB',
-        shadowRadius: 5,
+        shadowRadius: 4,
         shadowOffset: { height: 0, width: 0 },
         marginLeft: 5,
         marginRight: 5,
@@ -103,6 +103,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'flex-end',
         marginTop: 5,
+        marginLeft: 5,
     },
     titleText: {
         fontSize: 18,
@@ -119,6 +120,7 @@ const styles = StyleSheet.create({
         fontSize: 12,
         fontStyle: 'italic',
         color: '#969696',
+        marginLeft: 5,
     },
     imageView: {
         borderTopLeftRadius: 0,
@@ -150,6 +152,9 @@ const styles = StyleSheet.create({
         color: '#60c5ff',
     },
     equipment: {
+        color: '#30db99',
+    },
+    noEquipment: {
         color: '#ffb032',
     },
     time: {

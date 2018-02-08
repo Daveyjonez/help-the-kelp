@@ -29,7 +29,7 @@ export default class Login extends React.Component {
         try{
             firebase.auth().signInWithEmailAndPassword(email, password)
             .then(function(user){
-                navigate('Dashboard', {email, password});
+                navigate('Dashboard', {email});
             })
         }
         catch (error){

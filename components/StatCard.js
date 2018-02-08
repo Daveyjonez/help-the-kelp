@@ -23,19 +23,19 @@ export default class StatCard extends React.Component {
                 <Text style={styles.titleText}>{this.props.title}</Text>
                     <View style={styles.iconRow}>
                         <Stat
-                            numText='36'
+                            numText={this.props.recycle}
                             titleText='Bags of recyclables'
                             iconName='recycle'
                             iconType='material-community'
                             iconColor='#30db99'/>
                         <Stat
-                            numText='42'
+                            numText={this.props.trash}
                             titleText='Bags of trash'
                             iconName='delete'
                             iconType='material-community'
                             iconColor='gray'/>
                         <Stat
-                            numText='8'
+                            numText={this.props.attendance}
                             titleText='Cleanups attended'
                             iconName='worker'
                             iconType='material-community'
@@ -43,19 +43,19 @@ export default class StatCard extends React.Component {
                     </View>
                     <View style={styles.iconRow}>
                         <Stat
-                            numText='2'
+                            numText={this.props.hosted}
                             titleText='Cleanups hosted'
                             iconName='clipboard-text'
                             iconType='material-community'
                             iconColor='#ffb032'/>
                         <Stat
-                            numText='3'
+                            numText={this.props.locations}
                             titleText='Different locations'
                             iconName='map-marker'
                             iconType='material-community'
                             iconColor='#e23f52'/>
                         <Stat
-                            numText='21'
+                            numText={this.props.miles}
                             titleText='Miles cleaned'
                             iconName='walk'
                             iconType='material-community'

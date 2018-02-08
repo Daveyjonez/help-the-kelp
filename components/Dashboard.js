@@ -7,6 +7,8 @@ import { seaFoamGreen } from '../assets/styles/colors';
 
 import * as firebase from 'firebase';
 
+var defaultImg = require('../assets/images/default-01.jpg');
+
 export default class Dashboard extends React.Component {
     constructor(props){
         super(props)
@@ -17,11 +19,20 @@ export default class Dashboard extends React.Component {
 
     componentWillMount = () => {
         var tempArr = [];
-        firebase.database().ref('/events/').once('value').then((snapshot) => {
+        firebase.database().ref('/events/').orderByChild('date').once('value').then((snapshot) => {
             tempArr = this.snapshotToArray(snapshot);
             this.setState({
                 eventArr: tempArr
             });
+        });
+
+        var user = firebase.auth().currentUser;
+        firebase.database().ref('/users/' + user.uid).once('value').then((snapshot) => {
+            var userData = snapshot.val();
+            this.props.navigation.setParams({
+                name: userData.name
+            });
+            console.log(this.props.navigation);
         });
     }
 
@@ -35,8 +46,8 @@ export default class Dashboard extends React.Component {
         return returnArr;
     };
 
-    viewProfile = () => {
-        this.props.navigation.navigate('Profile');
+    viewProfile = (name) => {
+        this.props.navigation.navigate('Profile', {name});
     }
 
     viewEvent = () => {
@@ -50,7 +61,7 @@ export default class Dashboard extends React.Component {
                     name='account-circle'
                     type='material-community'
                     iconStyle={styles.headerLeft}
-                    onPress={() => navigation.navigate('Profile')}/>),
+                    onPress={() => navigation.navigate('Profile', this.props.navigation.params.name)}/>),
             headerTitle: (<Text style={styles.headerTitle}>Dashboard</Text>),
             headerRight: (
                 <Icon
@@ -74,7 +85,9 @@ export default class Dashboard extends React.Component {
                         location={item.location}
                         volunteersHave={item.volunteersHave}
                         volunteersNeed={item.volunteersNeed}
+                        equipment={item.equipment}
                         time={item.time}
+                        imageSource={item.imageSource?imageSource:defaultImg}
                         onPress={() => navigate('EventPage')}>
                     </EventCard>}
                 />

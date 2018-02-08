@@ -18,6 +18,37 @@ export default class Profile extends React.Component {
     constructor(props){
         super(props)
         this.state = {
+            name: '',
+            recycle: 0,
+            trash: 0,
+            attendance: 0,
+            hosted: 0,
+            locations: 0,
+            miles: 0,
+        }
+    }
+
+    componentWillMount = () => {
+        try{
+            var user = firebase.auth().currentUser;
+            firebase.database().ref('/users/' + user.uid).once('value').then((snapshot) => {
+                var userData = snapshot.val();
+                this.setState({
+                    name: userData.first,
+                    recycle: userData.recycle,
+                    trash: userData.trash,
+                    attendance: userData.attendance,
+                    hosted: userData.hosted,
+                    locations: userData.locations,
+                    miles: userData.miles,
+                });
+                this.props.navigation.setParams({
+                    name: this.state.name
+                });
+            });
+        }
+        catch(error) {
+            console.log(error.toString());
         }
     }
 
@@ -34,13 +65,15 @@ export default class Profile extends React.Component {
             }, function(error) {
                 console.log(error.toString);
         });
+        firebase.database().goOffline();
         this.props.navigation.navigate('Login');
     }
 
     static navigationOptions = ({ navigation }) => {
+        const {params = {}} = navigation.state;
         return {
             headerTintColor: seaFoamGreen,
-            headerTitle: (<Text style={styles.headerTitle}>{"David's Profile"}</Text>),
+            headerTitle: (<Text style={styles.headerTitle}>{this.props.name}{"'s Profile"}</Text>),
         }
     }
 
@@ -60,9 +93,12 @@ export default class Profile extends React.Component {
                         <View style={styles.stats}>
                             <StatCard
                                 title='Your stats'
-                                pounds={138}
-                                bottles={42}
-                                cleanups={5}/>
+                                recycle={this.state.recycle}
+                                trash={this.state.trash}
+                                attendance={this.state.attendance}
+                                hosted={this.state.hosted}
+                                locations={this.state.locations}
+                                miles={this.state.miles}/>
                         </View>
                         <Button style={styles.buttonStyle}
                             title = 'Update stats'

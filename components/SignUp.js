@@ -69,8 +69,12 @@ export default class SignUp extends React.Component {
                 first: first,
                 last: last,
                 profilePicture: null,
-                pounds: 0,
-                cleanups: 0,
+                recycle: 0,
+                trash: 0,
+                attendance: 0,
+                hosted: 0,
+                locations: 0,
+                miles: 0,
             });
         }
         catch(error){
