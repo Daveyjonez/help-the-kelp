@@ -1,5 +1,7 @@
 import React from 'react';
 import { Image,
+        CameraRoll,
+        Modal,
         ScrollView,
         StyleSheet,
         Text,
@@ -25,6 +27,9 @@ export default class Profile extends React.Component {
             hosted: 0,
             locations: 0,
             miles: 0,
+
+            modalVisible: false,
+            photos: [],
         }
     }
 
@@ -52,9 +57,19 @@ export default class Profile extends React.Component {
         }
     }
 
-    chooseImage = () => {
-
+    getPhotos = () => {
+        CameraRoll.getPhotos({
+            first: 100,
+        })
+        .then(r => this.setState({ photos: r.edges }))
+        .catch((err) => {
+            alert('Error loading camera roll');
+            return;
+        });
     }
+
+    openModal() {this.setState({modalVisible:true});}
+    closeModal() {this.setState({modalVisible:false});}
 
     updateStats = () => {
 
@@ -73,7 +88,7 @@ export default class Profile extends React.Component {
         const {params = {}} = navigation.state;
         return {
             headerTintColor: seaFoamGreen,
-            headerTitle: (<Text style={styles.headerTitle}>{this.props.name}{"'s Profile"}</Text>),
+            headerTitle: (<Text style={styles.headerTitle}>{"'s Profile"}</Text>),
         }
     }
 
@@ -82,9 +97,28 @@ export default class Profile extends React.Component {
             <View style={styles.bgContainer}>
                 <ScrollView>
                     <View style={styles.fgContainer}>
+                    <Modal
+                        visible={this.state.modalVisible}
+                        animationType={'slide'}
+                        onRequestClose={() => this.closeModal()}>
+                        <ScrollView>
+                            {this.state.photos.map((p, i) => {
+                                return (
+                                    <Image
+                                        key={i}
+                                        style={{width: 300, height: 100,}}
+                                        source={{ uri: p.node.image.uri }}/>
+                                );
+                            })}
+                        </ScrollView>
+                        <Button
+                            onPress={() => this.closeModal()}
+                            title="Close modal"/>
+                    </Modal>
+
                         <View style={styles.profileContainer}>
                             <TouchableHighlight
-                                onPress={() => this.chooseImage()}>
+                                onPress={() => this.openModal()}>
                                 <Image style={styles.profileImg}
                                 source={profilePhoto}/>
                             </TouchableHighlight>
@@ -139,8 +173,6 @@ const styles = StyleSheet.create({
         height: 310,
         width: 310,
         borderRadius: 155,
-
-
         paddingTop: 5,
         marginBottom: 10,
     },

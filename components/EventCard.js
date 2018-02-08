@@ -5,7 +5,6 @@ import { Image,
         TouchableOpacity,
         View } from 'react-native';
 import { StackNavigator } from 'react-navigation';
-import propTypes from 'prop-types';
 import { Icon } from 'react-native-elements';
 
 import { seaFoamGreen } from '../assets/styles/colors';

@@ -6,7 +6,7 @@ const Dimensions = require('Dimensions');
 const window = Dimensions.get('window');
 const width = Dimensions.get('window').width;
 
-export const Input = ({Label, value, onChangeText, placeholder, secureTextEntry}) => {
+export const Input = ({Label, value, onChangeText, placeholder, secureTextEntry, multiline, maxLength}) => {
     return (
       <View style = {styles.container}>
         <TextInput
@@ -17,6 +17,8 @@ export const Input = ({Label, value, onChangeText, placeholder, secureTextEntry}
             secureTextEntry = {secureTextEntry}
             value = {value}
             keyboardType={'email-address'}
+            multiline = {multiline}
+            maxLength = {maxLength}
         />
       </View>
     );

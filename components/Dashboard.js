@@ -29,10 +29,6 @@ export default class Dashboard extends React.Component {
         var user = firebase.auth().currentUser;
         firebase.database().ref('/users/' + user.uid).once('value').then((snapshot) => {
             var userData = snapshot.val();
-            this.props.navigation.setParams({
-                name: userData.name
-            });
-            console.log(this.props.navigation);
         });
     }
 
@@ -50,30 +46,34 @@ export default class Dashboard extends React.Component {
         this.props.navigation.navigate('Profile', {name});
     }
 
-    viewEvent = () => {
-        this.props.navigation.navigate('EventPage');
+    viewEvent = (title, date, location, volunteersHave, volunteersNeed,
+                    equipment, time, imageSource, key, navigate) => {
+        navigate('EventPage', {title, date, location, volunteersHave, volunteersNeed,
+                       equipment, time, key, imageSource});
     }
 
     static navigationOptions = ({ navigation }) => {
         return {
+            gesturesEnabled: false,
             headerLeft: (
                 <Icon
                     name='account-circle'
                     type='material-community'
                     iconStyle={styles.headerLeft}
-                    onPress={() => navigation.navigate('Profile', this.props.navigation.params.name)}/>),
+                    onPress={() => navigation.navigate('Profile')}/>),
             headerTitle: (<Text style={styles.headerTitle}>Dashboard</Text>),
             headerRight: (
                 <Icon
                     name='plus-box'
                     type='material-community'
                     iconStyle={styles.headerRight}
-                    onPress={() => navigation.navigate('AddEvent')}/>),
+                    onPress={() => navigation.navigate('ModalTest')}/>),
        }
    }
 
     render(){
         const{ navigate } = this.props.navigation;
+        console.log(this.state.eventArr)
         return (
             <View style={styles.bgContainer}>
                 <FlatList style={styles.list}
@@ -83,12 +83,22 @@ export default class Dashboard extends React.Component {
                         title={item.title}
                         date={item.date}
                         location={item.location}
+                        description={item.description}
                         volunteersHave={item.volunteersHave}
                         volunteersNeed={item.volunteersNeed}
                         equipment={item.equipment}
                         time={item.time}
                         imageSource={item.imageSource?imageSource:defaultImg}
-                        onPress={() => navigate('EventPage')}>
+                        onPress={() => this.viewEvent(item.title,
+                                                        item.date,
+                                                        item.location,
+                                                        item.volunteersHave,
+                                                        item.volunteersNeed,
+                                                        item.equipment,
+                                                        item.time,
+                                                        item.imageSource,
+                                                        item.key,
+                                                        navigate)}>
                     </EventCard>}
                 />
             </View>

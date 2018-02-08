@@ -1,16 +1,17 @@
 import React from 'react';
-import { Image,
-        KeyboardAvoidingView,
-            ScrollView,
-            StyleSheet,
-            Text,
-            TouchableHighlight,
-            View } from 'react-native';
+import { CameraRoll,
+         Image,
+         KeyboardAvoidingView,
+         Modal,
+         ScrollView,
+         StyleSheet,
+         Text,
+         TouchableHighlight,
+         View } from 'react-native';
 import { Button,
          CheckBox,
          Icon } from 'react-native-elements';
 import { Input } from './Input';
-import MapView from 'react-native-maps';
 import DateTimePicker from 'react-native-modal-datetime-picker';
 
 import * as firebase from 'firebase';
@@ -25,6 +26,7 @@ export default class AddEvent extends React.Component {
         this.state = {
             title: '',
             host: '',
+            description: '',
             rawDate: '',
             date: 'No date set',
             time: '00:00',
@@ -37,17 +39,24 @@ export default class AddEvent extends React.Component {
 
             isDatePickerVisible: false,
             isTimePickerVisible: false,
+
+            isCameraRollVisible: false,
+            modalVisible: false,
+
+
+            photos: [],
         }
     }
 
     createEvent = () => {
-        if(this.state.host && this.state.title && this.state.rawDate && this.state.date
+        if(this.state.host && this.state.title && this.state.description && this.state.rawDate
          && this.state.time && this.state.volunteersNeed) {
             try{
                 var newEventKey = firebase.database().ref().child('events').push().key;
                 firebase.database().ref('events/' + newEventKey).set({
                     title: this.state.title,
                     host: this.state.host,
+                    description: this.state.description,
                     rawDate: this.state.rawDate,
                     date: this.state.date,
                     time: this.state.time,
@@ -70,10 +79,26 @@ export default class AddEvent extends React.Component {
         }
     }
 
-    chooseImage = () => {
+    getPhotos = () => {
+        CameraRoll.getPhotos({
+            first: 100,
+        })
+        .then(r => this.setState({ photos: r.edges }))
+        .catch((err) => {
+            alert('Error loading camera roll');
+            return;
+        });
     }
 
     changeEquipment = () => this.setState({equipment: !this.state.equipment});
+
+    openModal() {
+        this.setState({modalVisible:true});
+    }
+
+    closeModal() {
+        this.setState({modalVisible:false});
+    }
 
     showDatePicker = () => this.setState({ isDatePickerVisible: true });
     hideDatePicker = () => this.setState({ isDatePickerVisible: false });
@@ -103,24 +128,56 @@ export default class AddEvent extends React.Component {
     };
 
     render(){
+        const modalVisible = this.state.modalVisible;
+        var cameraRoll = null;
+        if(modalVisible){
+            cameraRoll = <Modal
+                            visible={this.state.modalVisible}
+                            animationType={'slide'}
+                            onRequestClose={() => this.closeModal()}>
+                            <ScrollView>
+                                {this.state.photos.map((p, i) => {
+                                    return (
+                                        <Image
+                                            key={i}
+                                            style={{width: 300, height: 100,}}
+                                            source={{ uri: p.node.image.uri }}/>
+                                    );
+                                })}
+                            </ScrollView>
+                            <Button style={styles.buttonStyle}
+                                backgroundColor={seaFoamGreen}
+                                borderRadius={10}
+                                onPress={() => this.closeModal()}
+                                title="Close modal"/>
+                         </Modal>
+        }
+        else{
+            cameraRoll = null;
+        }
+
         return (
             <View style={styles.bgContainer}>
                 <ScrollView>
                     <View style={styles.fgContainer}>
+                    {cameraRoll}
+
                     <TouchableHighlight
-                    onPress={() => this.chooseImage()}>
+                        onPress={() => this.openModal()}>
                         <Image
                             source={placeholder}
                             style={{width: '100%', height: 200,}}/>
                     </TouchableHighlight>
+
+
                     <View style={styles.eventDetails}>
                         <Input
-                            placeholder = 'Event Title'
+                            placeholder = 'Event title'
                             onChangeText = {title => this.setState({title})}
                             value = {this.state.title}/>
 
                         <Input
-                            placeholder = 'Event Host/Sponsor'
+                            placeholder = 'Event host/sponsor'
                             onChangeText = {host => this.setState({host})}
                             value = {this.state.host}/>
 
@@ -128,6 +185,13 @@ export default class AddEvent extends React.Component {
                             placeholder = 'Location'
                             onChangeText = {location => this.setState({location})}
                             value = {this.state.location}/>
+
+                        <Input
+                            placeholder = 'Event description'
+                            onChangeText = {description => this.setState({description})}
+                            value = {this.state.description}
+                            multiline={true}
+                            maxLength={240}/>
 
                         <Text style={styles.eventText}>{this.state.date}</Text>
                         <Button style={styles.buttonStyle}
