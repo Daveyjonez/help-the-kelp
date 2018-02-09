@@ -11,6 +11,10 @@ These facts are incompatible.
 ### General
 - [ ] Firebase image storage
 
+### Known issues
+- [ ] Date does not stay in top left of event card on dashboard if long title
+- [ ] RSVP count does not update live on event page, but does database side
+
 ### Login & SignUp
 - [x] Firebase login & signup
 

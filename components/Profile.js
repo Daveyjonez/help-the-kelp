@@ -35,7 +35,8 @@ export default class Profile extends React.Component {
     componentWillMount = () => {
         try{
             var user = firebase.auth().currentUser;
-            firebase.database().ref('/users/' + user.uid).once('value').then((snapshot) => {
+            firebase.database().ref('/users/' + user.uid).once('value')
+            .then((snapshot) => {
                 var userData = snapshot.val();
                 this.setState({
                     name: userData.first,
