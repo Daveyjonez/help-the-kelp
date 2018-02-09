@@ -41,7 +41,7 @@ These facts are incompatible.
 - [ ] Report rude comments
 - [ ] Edit event if owner
 
-[Login Page](README images/login)
+![Login Page](README images/login)
 
 And always, thank you to Stack Overflow.
 
