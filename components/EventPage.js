@@ -26,7 +26,6 @@ export default class EventPage extends React.Component {
         this.state = {
             modalVisible: false,
             isRSVP: false,
-            rsvpKey: '',
             comment: '',
             commentArr: [],
         }
@@ -84,9 +83,8 @@ export default class EventPage extends React.Component {
     }
 
     handleRSVP = (key) => {
-        console.log(this.state.rsvpKey)
         if(this.state.isRSVP){
-            this.decRSVP(this.state.rsvpKey);
+            this.decRSVP(this.props.navigation.state.params.key);
         }
         else{
             this.incRSVP(key);
@@ -107,19 +105,23 @@ export default class EventPage extends React.Component {
 
         this.setState({
             isRSVP: true,
-            rsvpKey: retKey,
         });
     }
 
     decRSVP = (key) => {
         var user = firebase.auth().currentUser;
-        firebase.database().ref().child('events/' + key + '/attendees/' + user.uid).remove();
-        firebase.database().ref('events/' + key + '/volunteersHave').transaction(
+        var ref = firebase.database();
+        console.log('------------ KEY -------------')
+        console.log(key);
+
+        //TODO
+        //remove user id from event attendees
+
+        ref.ref('events/' + key + '/volunteersHave').transaction(
             (currentVolunteers) => {
                 if(currentVolunteers >= 0){currentVolunteers--;}
                 return(currentVolunteers)
             });
-
 
         this.setState({
             isRSVP: false,

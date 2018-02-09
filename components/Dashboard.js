@@ -73,7 +73,6 @@ export default class Dashboard extends React.Component {
 
     render(){
         const{ navigate } = this.props.navigation;
-        console.log(this.state.eventArr)
         return (
             <View style={styles.bgContainer}>
                 <FlatList style={styles.list}
