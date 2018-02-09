@@ -25,6 +25,8 @@ export default class EventPage extends React.Component {
         super(props)
         this.state = {
             modalVisible: false,
+            isRSVP: false,
+            rsvpKey: '',
             comment: '',
             commentArr: [],
         }
@@ -32,6 +34,23 @@ export default class EventPage extends React.Component {
 
     componentWillMount() {
         this.fetchComments();
+    }
+
+    fetchComments = () => {
+        try{
+            var tempArr = [];
+            var key = this.props.navigation.state.params.key;
+            firebase.database().ref('/events/' + key + '/comments/').once('value').then((snapshot) => {
+                tempArr = this.snapshotToArray(snapshot);
+                this.setState({
+                    commentArr: tempArr
+                });
+            });
+        }
+        catch(error){
+            alert('Something went wrong while fetching comments');
+            return;
+        }
     }
 
     snapshotToArray = snapshot => {
@@ -44,14 +63,66 @@ export default class EventPage extends React.Component {
         return returnArr;
     };
 
-    fetchComments = () => {
-        var tempArr = [];
-        var key = this.props.navigation.state.params.key;
-        firebase.database().ref('/events/' + key + '/comments/').once('value').then((snapshot) => {
-            tempArr = this.snapshotToArray(snapshot);
-            this.setState({
-                commentArr: tempArr
+    postComment = (key) => {
+        try{
+            if(this.state.comment){
+                var tempArr = [];
+                firebase.database().ref().child('events/' + key + '/comments/').push({
+                    comment: this.state.comment,
+                });
+                this.closeModal();
+            }
+            else{
+                alert('Please do not post empty comments');
+                return;
+            }
+        }
+        catch(error){
+            alert('Something went wrong while posting your comment');
+            return;
+        }
+    }
+
+    handleRSVP = (key) => {
+        console.log(this.state.rsvpKey)
+        if(this.state.isRSVP){
+            this.decRSVP(this.state.rsvpKey);
+        }
+        else{
+            this.incRSVP(key);
+        }
+    }
+
+    incRSVP = (key) => {
+        firebase.database().ref('events/' + key + '/volunteersHave').transaction(
+            (currentVolunteers) => {
+                currentVolunteers++;
+                return(currentVolunteers)
             });
+
+        var user = firebase.auth().currentUser;
+        firebase.database().ref().child('events/' + key + '/attendees/').push({
+            attendee: user.uid,
+        });
+
+        this.setState({
+            isRSVP: true,
+            rsvpKey: retKey,
+        });
+    }
+
+    decRSVP = (key) => {
+        var user = firebase.auth().currentUser;
+        firebase.database().ref().child('events/' + key + '/attendees/' + user.uid).remove();
+        firebase.database().ref('events/' + key + '/volunteersHave').transaction(
+            (currentVolunteers) => {
+                if(currentVolunteers >= 0){currentVolunteers--;}
+                return(currentVolunteers)
+            });
+
+
+        this.setState({
+            isRSVP: false,
         });
     }
 
@@ -61,23 +132,37 @@ export default class EventPage extends React.Component {
         this.setState({modalVisible:false});
     }
 
-    postComment = (key) => {
-        var tempArr = [];
-        firebase.database().ref().child('events/' + key + '/comments/').push({
-            comment: this.state.comment,
-        });
-        this.closeModal();
-    }
 
-    static navigationOptions = {
-        headerTintColor: seaFoamGreen
-
+    static navigationOptions = ({ navigation }) => {
+        return {
+            headerTintColor: seaFoamGreen,
+            headerTitle: (<Text style={styles.headerTitle}>Event Page</Text>),
+        }
     }
 
     render(){
-        console.log(this.props)
+        var isRSVP = this.state.isRSVP
+        var rsvpButton = false;
+        if(isRSVP){
+            rsvpButton =
+            <Button style={styles.buttonStyle}
+                title = "RSVP'd"
+                backgroundColor='gold'
+                icon={{name: 'star-circle', type: 'material-community'}}
+                borderRadius={10}
+                onPress ={() => this.handleRSVP(this.props.navigation.state.params.key)}/>
+        }
+        else{
+            rsvpButton =
+            <Button style={styles.buttonStyle}
+               title = 'RSVP'
+               backgroundColor={seaFoamGreen}
+               borderRadius={10}
+               onPress ={() => this.handleRSVP(this.props.navigation.state.params.key)}/>
+        }
         return (
             <View style={styles.container}>
+                <ScrollView>
                 <Modal
                     visible={this.state.modalVisible}
                     animationType={'slide'}
@@ -107,8 +192,8 @@ export default class EventPage extends React.Component {
                     style={{width: '100%', height: 200,}}/>
                 <View style={styles.infoText}>
                     <Text style={styles.titleText}>{this.props.navigation.state.params.title}</Text>
-                    <Text style={styles.locationText}>Location:{this.props.navigation.state.params.location}</Text>
-                    <Text style={styles.locationText}>Host:{this.props.navigation.state.params.host}</Text>
+                    <Text style={styles.locationText}>Location: {this.props.navigation.state.params.location}</Text>
+                    <Text style={styles.hostText}>Host: {this.props.navigation.state.params.host}</Text>
                     <Text style={styles.descriptionText}>{this.props.navigation.state.params.description}</Text>
                 </View>
                 <View style={styles.iconRow}>
@@ -139,10 +224,7 @@ export default class EventPage extends React.Component {
                     </View>
                 </View>
                 <View style={styles.buttons}>
-                    <Button style={styles.buttonStyle}
-                        title = 'RSVP'
-                        backgroundColor={seaFoamGreen}
-                        borderRadius={10}/>
+                    {rsvpButton}
                     <Button style={styles.buttonStyle}
                         title = 'Post comment'
                         backgroundColor={seaFoamGreen}
@@ -151,6 +233,8 @@ export default class EventPage extends React.Component {
                 </View>
                 <FlatList style={styles.list}
                     data={this.state.commentArr}
+                    scrollEnabled={this.state.scrollEnabled}
+                    ListEmptyComponent={<Text style={styles.commentText}>No comments yet...</Text>}
                     renderItem={({item}) =>
                     <CommentCard
                         imageSource={item.imageSource?imageSource:defaultImg}
@@ -159,6 +243,7 @@ export default class EventPage extends React.Component {
                         comment={item.comment}>
                     </CommentCard>}
                 />
+            </ScrollView>
             </View>
         );
     }
@@ -182,8 +267,16 @@ const styles = StyleSheet.create({
         fontFamily: 'Helvetica-Bold',
         fontSize: 25,
         color: seaFoamGreen,
+        marginTop: 5,
     },
     locationText: {
+        fontSize: 12,
+        fontFamily: 'Helvetica-Bold',
+        fontStyle: 'italic',
+        color: '#969696',
+        marginLeft: 5,
+    },
+    hostText: {
         fontSize: 12,
         fontStyle: 'italic',
         color: '#969696',
@@ -196,9 +289,10 @@ const styles = StyleSheet.create({
         marginRight: 10,
         marginTop: 15,
     },
-    headerLeft: {
+    headerTitle: {
+        fontSize: 20,
         color: seaFoamGreen,
-        paddingLeft: 20,
+        fontFamily: 'Helvetica-Bold',
     },
     iconRow: {
         flexDirection: 'row',
@@ -208,8 +302,8 @@ const styles = StyleSheet.create({
         marginTop: 15,
         paddingTop: 15,
         paddingBottom: 15,
-        paddingLeft: 20,
-        paddingRight: 20,
+        paddingLeft: 50,
+        paddingRight: 50,
     },
     iconPair: {
         flexDirection: 'column',
@@ -218,6 +312,14 @@ const styles = StyleSheet.create({
     iconText: {
         fontSize: 12,
         color: '#969696',
+    },
+    commentText: {
+        fontSize: 12,
+        fontStyle: 'italic',
+        color: '#969696',
+        alignItems: 'center',
+        flexDirection: 'column',
+        paddingTop: 20,
     },
     rsvp: {
         color: '#60c5ff',
@@ -234,10 +336,15 @@ const styles = StyleSheet.create({
     buttons: {
         flexDirection: 'row',
         alignItems: 'stretch',
-        justifyContent: 'space-between'
+        justifyContent: 'space-around',
+        paddingLeft: 15,
+        paddingRight: 15,
     },
     buttonStyle: {
         paddingTop: 20,
         width: 150,
     },
+    list: {
+        paddingBottom: 10,
+    }
 });

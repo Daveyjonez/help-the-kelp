@@ -44,7 +44,7 @@ export default class AddEvent extends React.Component {
     render(){
         return (
             <View>
-                <Modal
+                <Modal style={styles.modalStyle}
                     visible={this.state.modalVisible}
                     animationType={'slide'}
                     onRequestClose={() => this.closeModal()}>
@@ -68,3 +68,10 @@ export default class AddEvent extends React.Component {
         );
     }
 }
+const styles = StyleSheet.create({
+    modalStyle: {
+        flex: 1,
+        justifyContent: 'center',
+        backgroundColor: 'white',
+    }
+});

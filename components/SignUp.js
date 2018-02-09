@@ -75,6 +75,7 @@ export default class SignUp extends React.Component {
                 hosted: 0,
                 locations: 0,
                 miles: 0,
+                rsvp: 0,
             });
         }
         catch(error){

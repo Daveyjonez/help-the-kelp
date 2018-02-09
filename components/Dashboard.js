@@ -46,9 +46,9 @@ export default class Dashboard extends React.Component {
         this.props.navigation.navigate('Profile', {name});
     }
 
-    viewEvent = (title, date, location, volunteersHave, volunteersNeed,
+    viewEvent = (title, date, location, host, description, volunteersHave, volunteersNeed,
                     equipment, time, imageSource, key, navigate) => {
-        navigate('EventPage', {title, date, location, volunteersHave, volunteersNeed,
+        navigate('EventPage', {title, date, location, host, description, volunteersHave, volunteersNeed,
                        equipment, time, key, imageSource});
     }
 
@@ -67,7 +67,7 @@ export default class Dashboard extends React.Component {
                     name='plus-box'
                     type='material-community'
                     iconStyle={styles.headerRight}
-                    onPress={() => navigation.navigate('ModalTest')}/>),
+                    onPress={() => navigation.navigate('AddEvent')}/>),
        }
    }
 
@@ -83,6 +83,7 @@ export default class Dashboard extends React.Component {
                         title={item.title}
                         date={item.date}
                         location={item.location}
+                        host={item.host}
                         description={item.description}
                         volunteersHave={item.volunteersHave}
                         volunteersNeed={item.volunteersNeed}
@@ -92,6 +93,8 @@ export default class Dashboard extends React.Component {
                         onPress={() => this.viewEvent(item.title,
                                                         item.date,
                                                         item.location,
+                                                        item.host,
+                                                        item.description,
                                                         item.volunteersHave,
                                                         item.volunteersNeed,
                                                         item.equipment,

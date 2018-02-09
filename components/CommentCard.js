@@ -53,7 +53,6 @@ export default class CommentCard extends React.Component {
             marginLeft: 5,
             marginRight: 5,
             marginTop: 15,
-            marginBottom: 10,
             width: screenWidth - 20,
         },
         info: {
@@ -83,7 +82,7 @@ export default class CommentCard extends React.Component {
             marginLeft: 10,
         },
         commentText: {
-            fontSize: 12,
+            fontSize: 14,
             margin: 5,
             color: '#969696',
         },
