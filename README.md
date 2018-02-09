@@ -41,10 +41,7 @@ These facts are incompatible.
 - [ ] Report rude comments
 - [ ] Edit event if owner
 
-![alt text](README_images/login.png "Login screen")
-![alt text](README_images/signup.png "Signup screen")
-![alt text](README_images/dashboard.png "Dashboard screen")
-![alt text](README_images/addevent.png "AddEvent screen")
+![alt text](README_images/screencaps.png)
 
 And always, thank you to Stack Overflow.
 
