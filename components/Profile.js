@@ -27,7 +27,6 @@ export default class Profile extends React.Component {
             hosted: 0,
             locations: 0,
             miles: 0,
-
             modalVisible: false,
             photos: [],
         }
@@ -121,7 +120,7 @@ export default class Profile extends React.Component {
                                 activeOpacity={0.75}
                                 underlayColor={'transparent'}
                                 onPress={() => this.openModal()}>
-                                
+
                                 <Image style={styles.profileImg}
                                 source={profilePhoto}/>
                             </TouchableHighlight>

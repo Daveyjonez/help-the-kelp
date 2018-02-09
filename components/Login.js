@@ -1,5 +1,5 @@
 import React from 'react';
-import { ImageBackground,
+import { Alert, ImageBackground,
         KeyboardAvoidingView,
         StyleSheet,
         Text,
@@ -31,7 +31,7 @@ export default class Login extends React.Component {
             navigate('Dashboard', {email});
         })
         .catch(function(error){
-            alert(error.toString());
+            Alert.alert('Login failed', error.toString());
             console.log(error.toString());
         });
     }
