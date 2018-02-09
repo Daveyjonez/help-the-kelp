@@ -11,15 +11,15 @@ These facts are incompatible.
 - [x] Firebase login & signup
 - [x] Dashboard page with event cards
 - [x] Profile page with user stats
-- [] Update stats
+- [ ] Update stats
 - [x] ViewEvent page with more info about a cleanup
 - [x] Add commenting on ViewEvent page
-- [] RSVP functionality on ViewEvent page
+- [ ] RSVP functionality on ViewEvent page
 - [x] AddEvent page
-- [] Implement maps/markers for choosing location on AddEvent page
-- [] Firebase image storage
-- [] CameraRoll access for event images
-- [] CameraRoll access for profile pictures
+- [ ] Implement maps/markers for choosing location on AddEvent page
+- [ ] Firebase image storage
+- [ ] CameraRoll access for event images
+- [ ] CameraRoll access for profile pictures
 
 And always, thank you to Stack Overflow.
 
