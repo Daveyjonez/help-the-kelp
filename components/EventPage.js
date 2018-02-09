@@ -17,8 +17,10 @@ import * as firebase from 'firebase';
 var defaultImg = require('../assets/images/david-01.jpg');
 var placeholder = require('../assets/images/default-01.jpg');
 
+const Dimensions = require('Dimensions');
+const window = Dimensions.get('window');
 const screenWidth = window.width;
-
+const screenHeight = window.height;
 
 export default class EventPage extends React.Component {
     constructor(props){
@@ -32,24 +34,34 @@ export default class EventPage extends React.Component {
     }
 
     componentWillMount() {
+        this.fetchRSVP();
         this.fetchComments();
     }
 
-    fetchComments = () => {
-        try{
-            var tempArr = [];
-            var key = this.props.navigation.state.params.key;
-            firebase.database().ref('/events/' + key + '/comments/').once('value').then((snapshot) => {
-                tempArr = this.snapshotToArray(snapshot);
-                this.setState({
-                    commentArr: tempArr
-                });
+    fetchRSVP = () => {
+        var key = this.props.navigation.state.params.key;
+        firebase.database().ref('/events/' + key + '/volunteersHave').once('value').then((snapshot) => {
+            this.setState({
+                volunteersHave: snapshot.val,
             });
-        }
-        catch(error){
-            alert('Something went wrong while fetching comments');
-            return;
-        }
+        })
+        .catch(function(error){
+            alert(console.log(error.toString()));
+        });
+    }
+
+    fetchComments = () => {
+        var tempArr = [];
+        var key = this.props.navigation.state.params.key;
+        firebase.database().ref('/events/' + key + '/comments/').once('value').then((snapshot) => {
+            tempArr = this.snapshotToArray(snapshot);
+            this.setState({
+                commentArr: tempArr
+            });
+        })
+        .catch(function(error){
+            alert(console.log(error.toString()));
+        });
     }
 
     snapshotToArray = snapshot => {
@@ -89,6 +101,7 @@ export default class EventPage extends React.Component {
         else{
             this.incRSVP(key);
         }
+        this.fetchRSVP();
     }
 
     incRSVP = (key) => {
@@ -164,8 +177,8 @@ export default class EventPage extends React.Component {
         }
         return (
             <View style={styles.container}>
-                <ScrollView>
-                <Modal
+                <ScrollView style={styles.modal}>
+                <Modal style={styles.modal}
                     visible={this.state.modalVisible}
                     animationType={'slide'}
                     onRequestClose={() => this.closeModal()}>
@@ -257,6 +270,10 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         alignItems: 'stretch',
         flexDirection: 'column',
+    },
+    modal: {
+        width: screenWidth,
+        height: screenHeight,
     },
     modalComment: {
         alignItems: 'center',

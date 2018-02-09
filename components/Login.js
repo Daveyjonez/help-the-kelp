@@ -26,16 +26,14 @@ export default class Login extends React.Component {
     }
 
     loginUser = (email, password, navigate) => {
-        try{
-            firebase.auth().signInWithEmailAndPassword(email, password)
-            .then(function(user){
-                navigate('Dashboard', {email});
-            })
-        }
-        catch (error){
-            alert('No known user for that email and password combination')
+        firebase.auth().signInWithEmailAndPassword(email, password)
+        .then(function(user){
+            navigate('Dashboard', {email});
+        })
+        .catch(function(error){
+            alert(error.toString());
             console.log(error.toString());
-        }
+        });
     }
 
     static navigationOptions = { header: null, gesturesEnabled: false }

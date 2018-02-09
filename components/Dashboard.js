@@ -24,11 +24,17 @@ export default class Dashboard extends React.Component {
             this.setState({
                 eventArr: tempArr
             });
+        })
+        .catch(function(error){
+            alert(console.log(error.toString()));
         });
 
         var user = firebase.auth().currentUser;
         firebase.database().ref('/users/' + user.uid).once('value').then((snapshot) => {
             var userData = snapshot.val();
+        })
+        .catch(function(error){
+            alert(console.log(error.toString()));
         });
     }
 

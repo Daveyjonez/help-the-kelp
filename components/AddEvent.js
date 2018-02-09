@@ -31,19 +31,13 @@ export default class AddEvent extends React.Component {
             date: 'No date set',
             time: '00:00',
             location: '',
-
             volunteersHave: 1,
             volunteersNeed: null,
-
             equipment: false,
-
             isDatePickerVisible: false,
             isTimePickerVisible: false,
-
             isCameraRollVisible: false,
             modalVisible: false,
-
-
             photos: [],
         }
     }
@@ -51,24 +45,24 @@ export default class AddEvent extends React.Component {
     createEvent = () => {
         if(this.state.host && this.state.title && this.state.description && this.state.rawDate
          && this.state.time && this.state.volunteersNeed) {
-            try{
-                var newEventKey = firebase.database().ref().child('events').push().key;
-                firebase.database().ref('events/' + newEventKey).set({
-                    title: this.state.title,
-                    host: this.state.host,
-                    description: this.state.description,
-                    rawDate: this.state.rawDate,
-                    date: this.state.date,
-                    time: this.state.time,
-                    location: this.state.location,
-                    volunteersHave: this.state.volunteersHave,
-                    volunteersNeed: Number(this.state.volunteersNeed),
-                    equipment: this.state.equipment,
-                });
-            }
-            catch(error){
-                console.log(error.toString());
-            }
+
+            var newEventKey = firebase.database().ref().child('events').push().key;
+            firebase.database().ref('events/' + newEventKey).set({
+                title: this.state.title,
+                host: this.state.host,
+                description: this.state.description,
+                rawDate: this.state.rawDate,
+                date: this.state.date,
+                time: this.state.time,
+                location: this.state.location,
+                volunteersHave: this.state.volunteersHave,
+                volunteersNeed: Number(this.state.volunteersNeed),
+                equipment: this.state.equipment,
+            })
+            .catch(function(error){
+                alert(console.log(error.toString()));
+            });
+
             alert('Event successfully created!')
             this.props.navigation.navigate('Dashboard');
             return;
@@ -84,7 +78,7 @@ export default class AddEvent extends React.Component {
             first: 100,
         })
         .then(r => this.setState({ photos: r.edges }))
-        .catch((err) => {
+        .catch((error) => {
             alert('Error loading camera roll');
             return;
         });

@@ -118,7 +118,10 @@ export default class Profile extends React.Component {
 
                         <View style={styles.profileContainer}>
                             <TouchableHighlight
+                                activeOpacity={0.75}
+                                underlayColor={'transparent'}
                                 onPress={() => this.openModal()}>
+                                
                                 <Image style={styles.profileImg}
                                 source={profilePhoto}/>
                             </TouchableHighlight>

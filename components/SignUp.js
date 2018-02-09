@@ -49,6 +49,9 @@ export default class SignUp extends React.Component {
                         }
                     });
                 })
+                .catch(function(error){
+                    alert(console.log(error.toString()));
+                });
             }
             else{
                 alert('Passwords do not match');

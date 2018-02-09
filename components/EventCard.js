@@ -11,7 +11,7 @@ import { seaFoamGreen } from '../assets/styles/colors';
 
 const Dimensions = require('Dimensions');
 const window = Dimensions.get('window');
-const imageWidth = window.width;
+const screenWidth = window.width;
 
 export default class EventCard extends React.Component {
     constructor(props){
@@ -62,7 +62,7 @@ export default class EventCard extends React.Component {
                 </View>
                 <View style={styles.imageView}>
                     <Image
-                        style={{width: imageWidth-10, height: 100}}
+                        style={{width: screenWidth-10, height: 100}}
                         source={this.props.imageSource}/>
                 </View>
             </View>
@@ -108,6 +108,7 @@ const styles = StyleSheet.create({
         fontSize: 18,
         color: seaFoamGreen,
         fontFamily: 'Helvetica-Bold',
+        width: screenWidth - 150,
     },
     dateText: {
         fontSize: 12,
@@ -127,7 +128,7 @@ const styles = StyleSheet.create({
         borderBottomLeftRadius: 10,
         borderBottomRightRadius: 10,
         overflow: 'hidden',
-        width: imageWidth-10,
+        width: screenWidth-10,
         height: 100,
     },
     iconRow: {

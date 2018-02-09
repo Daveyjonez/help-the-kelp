@@ -1,54 +1,52 @@
 import React from 'react';
-import { CameraRoll,
-         Image,
-         KeyboardAvoidingView,
-         Modal,
-         ScrollView,
-         StyleSheet,
-         Text,
-         TouchableHighlight,
-         View } from 'react-native';
+import { CameraRoll, Image, Modal, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Button } from 'react-native-elements';
 
-import * as firebase from 'firebase';
 
-export default class AddEvent extends React.Component {
-    constructor(props){
-        super(props)
-        this.state = {
-            modalVisible: false,
-            photos: [],
+const Dimensions = require('Dimensions');
+const window = Dimensions.get('window');
+const screenWidth = window.width;
+const screenHeight = window.height;
+
+
+    export default class AddEvent extends React.Component {
+        constructor(props){
+            super(props)
+            this.state = {
+                modalVisible: false,
+                photos: [],
+            }
         }
-    }
 
-    getPhotos = () => {
-        CameraRoll.getPhotos({
-            first: 100,
-        })
-        .then(r => this.setState({ photos: r.edges }))
-        .catch((err) => {
-            alert('Error loading camera roll');
-            return;
-        });
-    }
-
-    openModal() {this.setState({modalVisible:true});}
-    closeModal() {this.setState({modalVisible:false});}
-
-    static navigationOptions = ({ navigation }) => {
-        return {
-            headerTitle: (<Text>Camera Roll Test</Text>),
+        getPhotos = () => {
+            CameraRoll.getPhotos({
+                first: 100,
+            })
+            .then(r => this.setState({ photos: r.edges }))
+            .catch((err) => {
+                alert('Error loading camera roll');
+                return;
+            });
         }
-    };
 
-    render(){
+        openModal() {this.setState({modalVisible:true});}
+
+        closeModal() {this.setState({modalVisible:false});}
+
+        static navigationOptions = ({ navigation }) => {
+            return {
+                headerTitle: (<Text>Camera Roll Test</Text>),
+            }
+        };
+
+        render(){
         return (
             <View>
-                <Modal style={styles.modalStyle}
+                <Modal style={styles.modal}
                     visible={this.state.modalVisible}
                     animationType={'slide'}
                     onRequestClose={() => this.closeModal()}>
-                    <ScrollView>
+                    <ScrollView style={styles.modal}>
                         {this.state.photos.map((p, i) => {
                             return (
                                 <Image
@@ -68,10 +66,9 @@ export default class AddEvent extends React.Component {
         );
     }
 }
+
 const styles = StyleSheet.create({
-    modalStyle: {
-        flex: 1,
-        justifyContent: 'center',
-        backgroundColor: 'white',
-    }
+modal: {
+    flex: 1,
+}
 });
