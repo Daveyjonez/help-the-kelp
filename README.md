@@ -8,7 +8,7 @@ A plastic bottle takes at least 450 years to degrade.
 These facts are incompatible.
 
 ## TODO
-###General
+### General
 - [ ] Firebase image storage
 
 ### Login & SignUp
@@ -41,7 +41,7 @@ These facts are incompatible.
 - [ ] Report rude comments
 - [ ] Edit event if owner
 
-[Login Page](README images/login.png)
+[Login Page](README images/login)
 
 And always, thank you to Stack Overflow.
 
