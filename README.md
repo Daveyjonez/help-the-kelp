@@ -41,7 +41,7 @@ These facts are incompatible.
 - [ ] Report rude comments
 - [ ] Edit event if owner
 
-![alt text](README_images/login)
+![alt text](README_images/login.png "Login screen")
 
 And always, thank you to Stack Overflow.
 
