@@ -1,5 +1,6 @@
 import React from 'react';
-import { FlatList,
+import { Alert,
+        FlatList,
         Image,
         Modal,
         ScrollView,
@@ -246,6 +247,7 @@ export default class EventPage extends React.Component {
                 <FlatList style={styles.list}
                     data={this.state.commentArr}
                     scrollEnabled={this.state.scrollEnabled}
+                    contentContainerStyle={{alignItems:'center'}}
                     ListEmptyComponent={<Text style={styles.commentText}>No comments yet...</Text>}
                     renderItem={({item}) =>
                     <CommentCard

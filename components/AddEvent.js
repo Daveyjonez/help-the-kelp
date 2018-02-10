@@ -18,16 +18,6 @@ import * as firebase from 'firebase';
 
 import { seaFoamGreen } from '../assets/styles/colors';
 
-var placeholder = require('../assets/images/placeholder-01.png');
-var img1 = require('../assets/images/event_photos/sunset.jpg');
-var img2 = require('../assets/images/event_photos/keyhole.jpg');
-var img3 = require('../assets/images/event_photos/clouds.jpg');
-var img4 = require('../assets/images/event_photos/falcon.jpg');
-var img5 = require('../assets/images/event_photos/kauai.jpg');
-var img6 = require('../assets/images/event_photos/wheat.jpg');
-
-var images = [img1, img2, img3, img4, img5, img6]
-
 const Dimensions = require('Dimensions');
 const window = Dimensions.get('window');
 const screenWidth = window.width;
@@ -50,9 +40,6 @@ export default class AddEvent extends React.Component {
             equipment: false,
             isDatePickerVisible: false,
             isTimePickerVisible: false,
-            modalVisible: false,
-            photos: [],
-            index: null
         }
     }
 
@@ -60,8 +47,9 @@ export default class AddEvent extends React.Component {
         if(this.state.host && this.state.title && this.state.description && this.state.rawDate
          && this.state.time && this.state.volunteersNeed) {
 
-            var newEventKey = firebase.database().ref().child('events').push().key;
-            firebase.database().ref('events/' + newEventKey).set({
+            var randomIndex = Math.floor(Math.random() * (6 - 0 + 1)) + 0;
+            console.log(randomIndex);
+            firebase.database().ref('events/').push({
                 title: this.state.title,
                 host: this.state.host,
                 description: this.state.description,
@@ -72,12 +60,11 @@ export default class AddEvent extends React.Component {
                 volunteersHave: this.state.volunteersHave,
                 volunteersNeed: Number(this.state.volunteersNeed),
                 equipment: this.state.equipment,
+                imageIndex: randomIndex,
             })
             .catch(function(error){
                 alert(console.log(error.toString()));
             });
-
-            var img = images[Math.random() * (6 - 0) + 0];
 
             alert('Event successfully created!')
             this.props.navigation.navigate('Dashboard');
@@ -123,9 +110,6 @@ export default class AddEvent extends React.Component {
             <View style={styles.bgContainer}>
                 <ScrollView>
                     <View style={styles.fgContainer}>
-                    <Image
-                        source={this.state.eventPhoto?this.state.eventPhoto:placeholder}
-                        style={{width: '100%', height: 200,}}/>
                     <View style={styles.eventDetails}>
                         <Input
                             placeholder = 'Event title'

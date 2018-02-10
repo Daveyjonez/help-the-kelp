@@ -13,7 +13,12 @@ import { seaFoamGreen } from '../assets/styles/colors';
 
 import * as firebase from 'firebase';
 
-var defaultImg = require('../assets/images/default-01.jpg');
+const images = [{image:require('../assets/images/event_photos/sunset.jpg')},
+                {image:require('../assets/images/event_photos/keyhole.jpg')},
+                {image:require('../assets/images/event_photos/clouds.jpg')},
+                {image:require('../assets/images/event_photos/falcon.jpg')},
+                {image:require('../assets/images/event_photos/kauai.jpg')},
+                {image:require('../assets/images/event_photos/wheat.jpg')}];
 
 export default class Dashboard extends React.Component {
     constructor(props){
@@ -53,9 +58,10 @@ export default class Dashboard extends React.Component {
     }
 
     viewEvent = (title, date, location, host, description, volunteersHave, volunteersNeed,
-                    equipment, time, imageSource, key, navigate) => {
-        navigate('EventPage', {title, date, location, host, description, volunteersHave, volunteersNeed,
-                       equipment, time, key, imageSource});
+                    equipment, time, imageSource, imageIndex, key, navigate) => {
+        this.props.navigation.navigate('EventPage', {title, date, location, host,
+            description, volunteersHave, volunteersNeed, equipment, time,
+            imageIndex, key});
     }
 
     static navigationOptions = ({ navigation }) => {
@@ -94,7 +100,7 @@ export default class Dashboard extends React.Component {
                         volunteersNeed={item.volunteersNeed}
                         equipment={item.equipment}
                         time={item.time}
-                        imageSource={item.imageSource?imageSource:defaultImg}
+                        imageSource={images[item.imageIndex]}
                         onPress={() => this.viewEvent(item.title,
                                                         item.date,
                                                         item.location,
@@ -104,7 +110,7 @@ export default class Dashboard extends React.Component {
                                                         item.volunteersNeed,
                                                         item.equipment,
                                                         item.time,
-                                                        item.imageSource,
+                                                        item.imageIndex,
                                                         item.key,
                                                         navigate)}>
                     </EventCard>}
