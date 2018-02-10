@@ -38,25 +38,30 @@ export default class Profile extends React.Component {
     }
 
     componentWillMount = () => {
-        var user = firebase.auth().currentUser;
-        var userData = null;
-        firebase.database().ref('/users/' + user.uid).once('value')
-        .then((snapshot) => {
-            userData = snapshot.val();
-            this.setState({
-                recycle: userData.recycle,
-                trash: userData.trash,
-                attendance: userData.attendance,
-                hosted: userData.hosted,
-                locations: userData.locations,
-                miles: userData.miles,
-            });
-        })
-        .catch(function(error) {
-            Alert.alert('Uh oh', 'Something went wrong while loading your profile');
-            console.log(error.toString());
+        this.fetchStats();
+    }
+
+    fetchStats = () => {
+        try{
+            var user = firebase.auth().currentUser;
+            var ref = firebase.database().ref('/users/' + user.uid);
+            var userData = null;
+            ref.on('value', (snapshot) => {
+                userData = snapshot.val();
+                this.setState({
+                    recycle: userData.recycle,
+                    trash: userData.trash,
+                    attendance: userData.attendance,
+                    hosted: userData.hosted,
+                    locations: userData.locations,
+                    miles: userData.miles,
+                });
+            })
+        }
+        catch(error){
+            Alert.alert('Uh oh', 'Something went wrong loading your profile');
             return;
-        });
+        }
     }
 
     updateStats = () => {
@@ -138,7 +143,6 @@ export default class Profile extends React.Component {
                                 onPress={() => this.closeModal()}/>
                         </View>
                     </Modal>
-
 
                     <View style={styles.fgContainer}>
                         <View style={styles.profileContainer}>

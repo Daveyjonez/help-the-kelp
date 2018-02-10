@@ -27,10 +27,10 @@ These facts are incompatible.
 ### Profile
 - [x] Profile page with user stats
 - [x] Logout
-- [ ] Edit profile info
-- [ ] Update stats
+- [x] Edit profile info
+- [x] Update stats
 - [ ] CameraRoll access for profile pictures
-- [ ] Settings page
+- [x] Settings page
 - [ ] History of cleanups attended
 
 ### AddEvent
