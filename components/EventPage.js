@@ -139,10 +139,10 @@ export default class EventPage extends React.Component {
         });
     }
 
-    openModal() {this.setState({modalVisible:true});}
+    openModal() {this.setState({modalVisible: true});}
     closeModal = () => {
         this.fetchComments();
-        this.setState({modalVisible:false});
+        this.setState({modalVisible: false});
     }
 
 

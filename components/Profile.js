@@ -61,26 +61,26 @@ export default class Profile extends React.Component {
 
     updateStats = () => {
         var user = firebase.auth().currentUser;
-        firebase.database().ref('users/' + user.uid).update({
+        var ref = firebase.database().ref('users/' + user.uid);
+        ref.update({
                 recycle: Number(this.state.newRecycle) + this.state.recycle,
                 trash: Number(this.state.newTrash) + this.state.trash,
                 attendance: Number(this.state.newAttendance) + this.state.attendance,
                 hosted: Number(this.state.newHosted) + this.state.hosted,
                 locations: Number(this.state.newLocations) + this.state.locations,
                 miles: Number(this.state.newMiles) + this.state.miles,
-            })
-        .catch(function(error){
+        }).then(() => {
+            Alert.alert('Great job!', 'Mother nature thanks you');
+        }).catch((error) => {
+            console.log(error.toString());
             Alert.alert('Uh oh', 'Something went wrong updating your stats');
             return;
         });
-        Alert.alert('Great job!', 'Mother nature thanks you');
+        this.closeModal();
     }
 
-    openModal() {this.setState({modalVisible:true});}
-    closeModal() {
-        this.updateStats();
-        this.setState({modalVisible:false});
-    }
+    openModal() {this.setState({modalVisible: true});}
+    closeModal() {this.setState({modalVisible: false});}
 
     static navigationOptions = ({ navigation }) => {
         return {
