@@ -78,11 +78,6 @@ export default class AddEvent extends React.Component {
             });
 
             var img = images[Math.random() * (6 - 0) + 0];
-            var storeRef = firebase.storage().ref();
-            var file = File(img);
-            storeRef.put(file).then(function(snapshot){
-                console.log('UPLOADED IMAGE');
-            });
 
             alert('Event successfully created!')
             this.props.navigation.navigate('Dashboard');
@@ -94,44 +89,7 @@ export default class AddEvent extends React.Component {
         }
     }
 
-    getPhotos = () => {
-        CameraRoll.getPhotos({
-            first: 100,
-        })
-        .then(r => this.setState({ photos: r.edges }))
-        .catch((error) => {
-            alert('Error loading camera roll');
-            return;
-        });
-    }
-
-    savePhoto = () => {
-        var ref = firebase.storage().ref();
-
-    }
-
-    setIndex = (index) => {
-        if (index === this.state.index) {
-          index = null
-        }
-        console.log('INDEX: ' + this.state.index);
-
-        this.setState({
-            index: index,
-        });
-    }
-
     changeEquipment = () => this.setState({equipment: !this.state.equipment});
-
-    openModal() {
-        this.getPhotos();
-        this.setState({modalVisible:true});
-    }
-
-    closeModal() {
-        this.setState({modalVisible:false});
-        this.updatePhoto();
-    }
 
     showDatePicker = () => this.setState({ isDatePickerVisible: true });
     hideDatePicker = () => this.setState({ isDatePickerVisible: false });
@@ -165,53 +123,9 @@ export default class AddEvent extends React.Component {
             <View style={styles.bgContainer}>
                 <ScrollView>
                     <View style={styles.fgContainer}>
-
-                    <Modal
-                        visible={this.state.modalVisible}
-                        animationType={'slide'}
-                        onRequestClose={() => this.closeModal()}>
-                        <View style={styles.modalContainer}>
-                        <Text style={styles.eventText}> CameraRoll </Text>
-                        <ScrollView contentContainerStyle={styles.scrollView}>
-                            {this.state.photos.map((p, i) => {
-                                return (
-                                    <TouchableHighlight
-                                        style={{opacity: i === this.state.index ? 0.5 : 1}}
-                                        key={i}
-                                        underlayColor='transparent'
-                                        onPress={() => this.setIndex(i)}>
-                                        <Image
-                                            key={i}
-                                            style={{width: screenWidth/3, height: screenWidth/3,}}
-                                            source={{uri: p.node.image.uri}}/>
-                                    </TouchableHighlight>
-                                    );
-                                })
-                            }
-                        </ScrollView>
-                        {
-                          this.state.index !== null  && (
-                            <View style={styles.buttonStyle}>
-                              <Button
-                                title='Select image'
-                                backgroundColor ={seaFoamGreen}
-                                borderRadius={10}
-                                onPress={this.closeModal()}/>
-                            </View>
-                          )
-                        }
-                        </View>
-                    </Modal>
-
-
-                    <TouchableHighlight
-                        onPress={() => this.openModal()}>
-                        <Image
-                            source={this.state.eventPhoto?this.state.eventPhoto:placeholder}
-                            style={{width: '100%', height: 200,}}/>
-                    </TouchableHighlight>
-
-
+                    <Image
+                        source={this.state.eventPhoto?this.state.eventPhoto:placeholder}
+                        style={{width: '100%', height: 200,}}/>
                     <View style={styles.eventDetails}>
                         <Input
                             placeholder = 'Event title'
