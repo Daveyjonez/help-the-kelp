@@ -1,5 +1,11 @@
 import React from 'react';
-import { Button, FlatList, ScrollView, StyleSheet, Text, View} from 'react-native';
+import { Alert,
+        Button,
+        FlatList,
+        ScrollView,
+        StyleSheet,
+        Text,
+        View} from 'react-native';
 import { Icon } from 'react-native-elements';
 import EventCard from './EventCard';
 
@@ -18,38 +24,32 @@ export default class Dashboard extends React.Component {
     }
 
     componentWillMount = () => {
-        var tempArr = [];
-        firebase.database().ref('/events/').orderByChild('date').once('value').then((snapshot) => {
-            tempArr = this.snapshotToArray(snapshot);
-            this.setState({
-                eventArr: tempArr
+        try{
+            var ref = firebase.database().ref('/events/');
+            ref.on('value', (snapshot) => {
+                this.snapshotToArray(snapshot);
             });
-        })
-        .catch(function(error){
-            alert(console.log(error.toString()));
-        });
-
-        var user = firebase.auth().currentUser;
-        firebase.database().ref('/users/' + user.uid).once('value').then((snapshot) => {
-            var userData = snapshot.val();
-        })
-        .catch(function(error){
-            alert(console.log(error.toString()));
-        });
+        }
+        catch(error){
+            Alert.alert('Uh oh', 'Something went wrong loading your dashboard');
+            return;
+        }
     }
 
     snapshotToArray = snapshot => {
-        var returnArr = [];
+        var tempArr = [];
         snapshot.forEach(childSnapshot => {
             var item = childSnapshot.val();
             item.key = childSnapshot.key;
-            returnArr.push(item);
+            tempArr.push(item);
         });
-        return returnArr;
+        this.setState({
+            eventArr: tempArr
+        });
     };
 
     viewProfile = (name) => {
-        this.props.navigation.navigate('Profile', {name});
+        this.props.navigation.navigate('Profile');
     }
 
     viewEvent = (title, date, location, host, description, volunteersHave, volunteersNeed,

@@ -30,34 +30,33 @@ export default class EventPage extends React.Component {
             isRSVP: false,
             comment: '',
             commentArr: [],
+            volunteersHave: 0,
         }
     }
 
     componentWillMount() {
-        this.fetchRSVP();
-        this.fetchComments();
-    }
-
-    fetchRSVP = () => {
-        var key = this.props.navigation.state.params.key;
-        firebase.database().ref('/events/' + key + '/volunteersHave').once('value').then((snapshot) => {
-            this.setState({
-                volunteersHave: snapshot.val,
+        try{
+            var key = this.props.navigation.state.params.key;
+            var ref = firebase.database().ref('/events/' + key + '/volunteersHave');
+            ref.on('value', (snapshot) => {
+                this.setState({
+                    volunteersHave: snapshot.val,
+                });
             });
-        })
-        .catch(function(error){
-            alert(console.log(error.toString()));
-        });
+        }
+        catch(error){
+            Alert.alert('Uh oh', 'Something went wrong');
+            return;
+        }
+        this.fetchComments();
     }
 
     fetchComments = () => {
         var tempArr = [];
         var key = this.props.navigation.state.params.key;
-        firebase.database().ref('/events/' + key + '/comments/').once('value').then((snapshot) => {
-            tempArr = this.snapshotToArray(snapshot);
-            this.setState({
-                commentArr: tempArr
-            });
+        var ref = firebase.database().ref('/events/' + key + '/comments/');
+        ref.once('value').then((snapshot) => {
+            this.snapshotToArray(snapshot);
         })
         .catch(function(error){
             alert(console.log(error.toString()));
@@ -65,13 +64,15 @@ export default class EventPage extends React.Component {
     }
 
     snapshotToArray = snapshot => {
-        var returnArr = [];
+        var tempArr = [];
         snapshot.forEach(childSnapshot => {
             var item = childSnapshot.val();
             item.key = childSnapshot.key;
-            returnArr.push(item);
+            tempArr.push(item);
         });
-        return returnArr;
+        this.setState({
+            commentArr: tempArr
+        });
     };
 
     postComment = (key) => {
@@ -101,7 +102,6 @@ export default class EventPage extends React.Component {
         else{
             this.incRSVP(key);
         }
-        this.fetchRSVP();
     }
 
     incRSVP = (key) => {
@@ -124,8 +124,6 @@ export default class EventPage extends React.Component {
     decRSVP = (key) => {
         var user = firebase.auth().currentUser;
         var ref = firebase.database();
-        console.log('------------ KEY -------------')
-        console.log(key);
 
         //TODO
         //remove user id from event attendees

@@ -1,5 +1,6 @@
 import React from 'react';
-import { Image,
+import { Alert,
+        Image,
         CameraRoll,
         Modal,
         ScrollView,
@@ -9,7 +10,6 @@ import { Image,
         View} from 'react-native';
 import { Button, Icon } from 'react-native-elements';
 import StatCard from './StatCard';
-
 
 import { seaFoamGreen } from '../assets/styles/colors';
 var profilePhoto = require('../assets/images/david-01.jpg');
@@ -27,68 +27,39 @@ export default class Profile extends React.Component {
             hosted: 0,
             locations: 0,
             miles: 0,
-            modalVisible: false,
-            photos: [],
         }
     }
 
     componentWillMount = () => {
-        try{
-            var user = firebase.auth().currentUser;
-            firebase.database().ref('/users/' + user.uid).once('value')
-            .then((snapshot) => {
-                var userData = snapshot.val();
-                this.setState({
-                    name: userData.first,
-                    recycle: userData.recycle,
-                    trash: userData.trash,
-                    attendance: userData.attendance,
-                    hosted: userData.hosted,
-                    locations: userData.locations,
-                    miles: userData.miles,
-                });
-                this.props.navigation.setParams({
-                    name: this.state.name
-                });
+        var user = firebase.auth().currentUser;
+        firebase.database().ref('/users/' + user.uid).once('value')
+        .then((snapshot) => {
+            var userData = snapshot.val;
+            this.setState({
+                name: userData.first,
+                recycle: userData.recycle,
+                trash: userData.trash,
+                attendance: userData.attendance,
+                hosted: userData.hosted,
+                locations: userData.locations,
+                miles: userData.miles,
             });
-        }
-        catch(error) {
-            console.log(error.toString());
-        }
-    }
-
-    getPhotos = () => {
-        CameraRoll.getPhotos({
-            first: 100,
         })
-        .then(r => this.setState({ photos: r.edges }))
-        .catch((err) => {
-            alert('Error loading camera roll');
+        .catch(function(error) {
+            Alert.alert('Uh oh', 'Something went wrong while loading your profile');
+            console.log(error.toString());
             return;
         });
     }
-
-    openModal() {this.setState({modalVisible:true});}
-    closeModal() {this.setState({modalVisible:false});}
 
     updateStats = () => {
 
     }
 
-    logOut = () => {
-        firebase.auth().signOut().then(function() {
-            }, function(error) {
-                console.log(error.toString);
-        });
-        firebase.database().goOffline();
-        this.props.navigation.navigate('Login');
-    }
-
     static navigationOptions = ({ navigation }) => {
-        const {params = {}} = navigation.state;
         return {
             headerTintColor: seaFoamGreen,
-            headerTitle: (<Text style={styles.headerTitle}>{"'s Profile"}</Text>),
+            headerTitle: (<Text style={styles.headerTitle}>Your Profile</Text>),
         }
     }
 
@@ -97,25 +68,6 @@ export default class Profile extends React.Component {
             <View style={styles.bgContainer}>
                 <ScrollView>
                     <View style={styles.fgContainer}>
-                    <Modal
-                        visible={this.state.modalVisible}
-                        animationType={'slide'}
-                        onRequestClose={() => this.closeModal()}>
-                        <ScrollView>
-                            {this.state.photos.map((p, i) => {
-                                return (
-                                    <Image
-                                        key={i}
-                                        style={{width: 300, height: 100,}}
-                                        source={{ uri: p.node.image.uri }}/>
-                                );
-                            })}
-                        </ScrollView>
-                        <Button
-                            onPress={() => this.closeModal()}
-                            title="Close modal"/>
-                    </Modal>
-
                         <View style={styles.profileContainer}>
                             <TouchableHighlight
                                 activeOpacity={0.75}
@@ -144,10 +96,10 @@ export default class Profile extends React.Component {
                             icon={{name: 'emoticon-happy', type: 'material-community'}}
                             onPress= {() => this.updateStats()}/>
                         <Button style={styles.buttonStyle}
-                            title = 'Log out'
-                            backgroundColor='#f44242'
+                            title = 'Settings'
+                            backgroundColor={seaFoamGreen}
                             borderRadius={10}
-                            onPress= {() => this.logOut()}/>
+                            onPress= {() => this.props.navigation.navigate('Settings')}/>
                     </View>
                 </ScrollView>
             </View>

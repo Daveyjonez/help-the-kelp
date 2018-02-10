@@ -40,13 +40,7 @@ export default class SignUp extends React.Component {
 
                     let state = this.state;
                     firebase.auth().onAuthStateChanged((user) => {
-                        if (user) {
-                            this.writeUserData(user, this.state.email, this.state.firstName, this.state.lastName);
-                        }
-                        else {
-                            alert('Something went wrong. Please try again.');
-                            return;
-                        }
+                        this.writeUserData(user, this.state.email, this.state.firstName, this.state.lastName);
                     });
                 })
                 .catch(function(error){
@@ -66,8 +60,7 @@ export default class SignUp extends React.Component {
     }
 
     writeUserData = (user, email, first, last) => {
-        try{
-            firebase.database().ref('users/' + user.uid).set({
+        firebase.database().ref('users/' + user.uid).set({
                 email: email,
                 first: first,
                 last: last,
@@ -79,12 +72,12 @@ export default class SignUp extends React.Component {
                 locations: 0,
                 miles: 0,
                 rsvp: 0,
-            });
-        }
-        catch(error){
+            })
+        .catch(function(error){
+            Alert.alert('Uh oh', 'Something went wrong creating your account');
             console.log(error.toString());
-        }
-        return;
+            return;
+        });
     }
 
     static navigationOptions = { header: null }

@@ -1,5 +1,6 @@
 import React from 'react';
-import { Alert, ImageBackground,
+import { Alert,
+        ImageBackground,
         KeyboardAvoidingView,
         StyleSheet,
         Text,

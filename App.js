@@ -10,6 +10,7 @@ import Profile from './components/Profile';
 import AddEvent from './components/AddEvent';
 import EventPage from './components/EventPage';
 import ModalTest from './components/ModalTest';
+import Settings from './components/Settings';
 
 const Application = StackNavigator({
     Login: { screen: Login},
@@ -19,6 +20,7 @@ const Application = StackNavigator({
     AddEvent: {screen: AddEvent},
     EventPage: {screen: EventPage},
     ModalTest: {screen: ModalTest},
+    Settings: {screen: Settings},
 });
 
 export default class App extends React.Component {
