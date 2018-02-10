@@ -30,6 +30,7 @@ export default class App extends React.Component {
             apiKey: 'AIzaSyAiCNhRbXsyyD_r5uyGeNHaHcPH5W3_VAM',
             authDomain: 'help-the-kelp.firebaseapp.com',
             databaseURL: 'https://help-the-kelp.firebaseio.com/',
+            storageBucket: 'gs://help-the-kelp.appspot.com'
         }
 
         if (!firebase.apps.length) {

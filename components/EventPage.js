@@ -145,7 +145,6 @@ export default class EventPage extends React.Component {
         this.setState({modalVisible: false});
     }
 
-
     static navigationOptions = ({ navigation }) => {
         return {
             headerTintColor: seaFoamGreen,

@@ -9,7 +9,7 @@ These facts are incompatible.
 
 ## TODO
 ### General
-- [ ] Firebase image storage
+- [ ] Firebase image storage (APPARENTLY EXPO AND RN-BLOB DON'T WORK WELL SO THIS IS ON HOLD FOR A WHILE)
 
 ### Known issues
 - [ ] Date does not stay in top left of event card on dashboard if long title
@@ -29,14 +29,14 @@ These facts are incompatible.
 - [x] Logout
 - [x] Edit profile info
 - [x] Update stats
-- [ ] CameraRoll access for profile pictures
+- [ ] CameraRoll access for profile pictures (SEE GENERAL)
 - [x] Settings page
 - [ ] History of cleanups attended
 
 ### AddEvent
 - [x] AddEvent page
 - [ ] Implement maps/markers for choosing location on AddEvent page
-- [ ] CameraRoll access for event images
+- [ ] CameraRoll access for event images (SEE GENERAL)
 
 ### ViewEvent
 - [x] ViewEvent page with more info about a cleanup

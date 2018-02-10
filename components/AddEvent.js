@@ -12,18 +12,32 @@ import { Button,
          CheckBox,
          Icon } from 'react-native-elements';
 import { Input } from './Input';
-import DateTimePicker from 'react-native-modal-datetime-picker';
 
+import DateTimePicker from 'react-native-modal-datetime-picker';
 import * as firebase from 'firebase';
 
 import { seaFoamGreen } from '../assets/styles/colors';
-var placeholder = require('../assets/images/placeholder-01.png');
 
+var placeholder = require('../assets/images/placeholder-01.png');
+var img1 = require('../assets/images/event_photos/sunset.jpg');
+var img2 = require('../assets/images/event_photos/keyhole.jpg');
+var img3 = require('../assets/images/event_photos/clouds.jpg');
+var img4 = require('../assets/images/event_photos/falcon.jpg');
+var img5 = require('../assets/images/event_photos/kauai.jpg');
+var img6 = require('../assets/images/event_photos/wheat.jpg');
+
+var images = [img1, img2, img3, img4, img5, img6]
+
+const Dimensions = require('Dimensions');
+const window = Dimensions.get('window');
+const screenWidth = window.width;
+const screenHeight = window.height;
 
 export default class AddEvent extends React.Component {
     constructor(props){
         super(props)
         this.state = {
+            evenPhoto: null,
             title: '',
             host: '',
             description: '',
@@ -36,9 +50,9 @@ export default class AddEvent extends React.Component {
             equipment: false,
             isDatePickerVisible: false,
             isTimePickerVisible: false,
-            isCameraRollVisible: false,
             modalVisible: false,
             photos: [],
+            index: null
         }
     }
 
@@ -63,6 +77,13 @@ export default class AddEvent extends React.Component {
                 alert(console.log(error.toString()));
             });
 
+            var img = images[Math.random() * (6 - 0) + 0];
+            var storeRef = firebase.storage().ref();
+            var file = File(img);
+            storeRef.put(file).then(function(snapshot){
+                console.log('UPLOADED IMAGE');
+            });
+
             alert('Event successfully created!')
             this.props.navigation.navigate('Dashboard');
             return;
@@ -84,14 +105,32 @@ export default class AddEvent extends React.Component {
         });
     }
 
+    savePhoto = () => {
+        var ref = firebase.storage().ref();
+
+    }
+
+    setIndex = (index) => {
+        if (index === this.state.index) {
+          index = null
+        }
+        console.log('INDEX: ' + this.state.index);
+
+        this.setState({
+            index: index,
+        });
+    }
+
     changeEquipment = () => this.setState({equipment: !this.state.equipment});
 
     openModal() {
+        this.getPhotos();
         this.setState({modalVisible:true});
     }
 
     closeModal() {
         this.setState({modalVisible:false});
+        this.updatePhoto();
     }
 
     showDatePicker = () => this.setState({ isDatePickerVisible: true });
@@ -122,44 +161,53 @@ export default class AddEvent extends React.Component {
     };
 
     render(){
-        const modalVisible = this.state.modalVisible;
-        var cameraRoll = null;
-        if(modalVisible){
-            cameraRoll = <Modal
-                            visible={this.state.modalVisible}
-                            animationType={'slide'}
-                            onRequestClose={() => this.closeModal()}>
-                            <ScrollView>
-                                {this.state.photos.map((p, i) => {
-                                    return (
-                                        <Image
-                                            key={i}
-                                            style={{width: 300, height: 100,}}
-                                            source={{ uri: p.node.image.uri }}/>
-                                    );
-                                })}
-                            </ScrollView>
-                            <Button style={styles.buttonStyle}
-                                backgroundColor={seaFoamGreen}
-                                borderRadius={10}
-                                onPress={() => this.closeModal()}
-                                title="Close modal"/>
-                         </Modal>
-        }
-        else{
-            cameraRoll = null;
-        }
-
         return (
             <View style={styles.bgContainer}>
                 <ScrollView>
                     <View style={styles.fgContainer}>
-                    {cameraRoll}
+
+                    <Modal
+                        visible={this.state.modalVisible}
+                        animationType={'slide'}
+                        onRequestClose={() => this.closeModal()}>
+                        <View style={styles.modalContainer}>
+                        <Text style={styles.eventText}> CameraRoll </Text>
+                        <ScrollView contentContainerStyle={styles.scrollView}>
+                            {this.state.photos.map((p, i) => {
+                                return (
+                                    <TouchableHighlight
+                                        style={{opacity: i === this.state.index ? 0.5 : 1}}
+                                        key={i}
+                                        underlayColor='transparent'
+                                        onPress={() => this.setIndex(i)}>
+                                        <Image
+                                            key={i}
+                                            style={{width: screenWidth/3, height: screenWidth/3,}}
+                                            source={{uri: p.node.image.uri}}/>
+                                    </TouchableHighlight>
+                                    );
+                                })
+                            }
+                        </ScrollView>
+                        {
+                          this.state.index !== null  && (
+                            <View style={styles.buttonStyle}>
+                              <Button
+                                title='Select image'
+                                backgroundColor ={seaFoamGreen}
+                                borderRadius={10}
+                                onPress={this.closeModal()}/>
+                            </View>
+                          )
+                        }
+                        </View>
+                    </Modal>
+
 
                     <TouchableHighlight
                         onPress={() => this.openModal()}>
                         <Image
-                            source={placeholder}
+                            source={this.state.eventPhoto?this.state.eventPhoto:placeholder}
                             style={{width: '100%', height: 200,}}/>
                     </TouchableHighlight>
 
@@ -254,7 +302,7 @@ const styles = StyleSheet.create({
         alignItems: 'stretch',
         flexDirection: 'column',
     },
-  container: {
+    container: {
       flex: 1,
       padding: 20,
       backgroundColor: '#fff',
@@ -265,6 +313,16 @@ const styles = StyleSheet.create({
       fontSize: 20,
       color: seaFoamGreen,
       fontFamily: 'Helvetica-Bold',
+  },
+  modalContainer: {
+   paddingTop: 20,
+   paddingBottom: 30,
+   flex: 1,
+   alignItems: 'center',
+ },
+ scrollView: {
+    flexWrap: 'wrap',
+    flexDirection: 'row'
   },
   buttonStyle: {
       paddingTop: 10,

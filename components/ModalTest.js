@@ -49,7 +49,8 @@ export default class AddEvent extends React.Component {
                     visible={this.state.modalVisible}
                     animationType={'slide'}
                     onRequestClose={() => this.closeModal()}>
-                    <ScrollView style={styles.modal}>
+                    <ScrollView style={{flex: 1}}
+                        contentContainerStyle={{ height: 100, width: 300 }}>
                         {this.state.photos.map((p, i) => {
                             return (
                                 <Image
@@ -73,6 +74,7 @@ export default class AddEvent extends React.Component {
 const styles = StyleSheet.create({
     modal: {
         flex: 1,
+        alignItems: 'center',
         width: screenWidth,
         height: screenHeight,
     }
