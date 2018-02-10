@@ -1,7 +1,7 @@
 import React from 'react';
 import { Alert,
-        Image,
         CameraRoll,
+        Image,
         Modal,
         ScrollView,
         StyleSheet,
@@ -10,7 +10,7 @@ import { Alert,
         View} from 'react-native';
 import { Button, Icon } from 'react-native-elements';
 import StatCard from './StatCard';
-
+import { Input } from './Input';
 import { seaFoamGreen } from '../assets/styles/colors';
 var profilePhoto = require('../assets/images/david-01.jpg');
 
@@ -20,23 +20,30 @@ export default class Profile extends React.Component {
     constructor(props){
         super(props)
         this.state = {
-            name: '',
+            modalVisible: false,
             recycle: 0,
             trash: 0,
             attendance: 0,
             hosted: 0,
             locations: 0,
             miles: 0,
+
+            newRecycle: '',
+            newTrash: '',
+            newAttendance: '',
+            newHosted: '',
+            newLocations: '',
+            newMiles: '',
         }
     }
 
     componentWillMount = () => {
         var user = firebase.auth().currentUser;
+        var userData = null;
         firebase.database().ref('/users/' + user.uid).once('value')
         .then((snapshot) => {
-            var userData = snapshot.val;
+            userData = snapshot.val();
             this.setState({
-                name: userData.first,
                 recycle: userData.recycle,
                 trash: userData.trash,
                 attendance: userData.attendance,
@@ -53,7 +60,26 @@ export default class Profile extends React.Component {
     }
 
     updateStats = () => {
+        var user = firebase.auth().currentUser;
+        firebase.database().ref('users/' + user.uid).update({
+                recycle: Number(this.state.newRecycle) + this.state.recycle,
+                trash: Number(this.state.newTrash) + this.state.trash,
+                attendance: Number(this.state.newAttendance) + this.state.attendance,
+                hosted: Number(this.state.newHosted) + this.state.hosted,
+                locations: Number(this.state.newLocations) + this.state.locations,
+                miles: Number(this.state.newMiles) + this.state.miles,
+            })
+        .catch(function(error){
+            Alert.alert('Uh oh', 'Something went wrong updating your stats');
+            return;
+        });
+        Alert.alert('Great job!', 'Mother nature thanks you');
+    }
 
+    openModal() {this.setState({modalVisible:true});}
+    closeModal() {
+        this.updateStats();
+        this.setState({modalVisible:false});
     }
 
     static navigationOptions = ({ navigation }) => {
@@ -67,13 +93,58 @@ export default class Profile extends React.Component {
         return (
             <View style={styles.bgContainer}>
                 <ScrollView>
+                    <Modal style={styles.modal}
+                        visible={this.state.modalVisible}
+                        animationType={'slide'}
+                        onRequestClose={() => this.closeModal()}>
+                        <View style={styles.modal}>
+                            <Text style={styles.updateText}>
+                                Enter the values you wish to add to your previous totals
+                            </Text>
+                            <Input
+                                placeholder = 'Bags of recyclables'
+                                onChangeText = {newRecycle => this.setState({newRecycle})}
+                                value = {this.state.newRecycle}/>
+                            <Input
+                                placeholder = 'Bags of trash'
+                                onChangeText = {newTrash => this.setState({newTrash})}
+                                value = {this.state.newTrash}/>
+                            <Input
+                                placeholder = '# of cleanups attended'
+                                onChangeText = {newAttendance => this.setState({newAttendance})}
+                                value = {this.state.newAttendance}/>
+                            <Input
+                                placeholder = '# of cleanups hosted'
+                                onChangeText = {newHosted => this.setState({newHosted})}
+                                value = {this.state.newHosted}/>
+                            <Input
+                                placeholder = '# of new locations'
+                                onChangeText = {newLocations => this.setState({newLocations})}
+                                value = {this.state.newLocations}/>
+                            <Input
+                                placeholder = '# of miles cleaned'
+                                onChangeText = {newMiles => this.setState({newMiles})}
+                                value = {this.state.newMiles}/>
+
+                            <Button style={styles.buttonStyle}
+                                title='Submit'
+                                backgroundColor={seaFoamGreen}
+                                borderRadius={10}
+                                onPress={() => this.updateStats()}/>
+                            <Button style={styles.buttonStyle}
+                                title='Discard'
+                                backgroundColor={seaFoamGreen}
+                                borderRadius={10}
+                                onPress={() => this.closeModal()}/>
+                        </View>
+                    </Modal>
+
+
                     <View style={styles.fgContainer}>
                         <View style={styles.profileContainer}>
                             <TouchableHighlight
                                 activeOpacity={0.75}
-                                underlayColor={'transparent'}
-                                onPress={() => this.openModal()}>
-
+                                underlayColor={'transparent'}>
                                 <Image style={styles.profileImg}
                                 source={profilePhoto}/>
                             </TouchableHighlight>
@@ -94,7 +165,7 @@ export default class Profile extends React.Component {
                             backgroundColor={seaFoamGreen}
                             borderRadius={10}
                             icon={{name: 'emoticon-happy', type: 'material-community'}}
-                            onPress= {() => this.updateStats()}/>
+                            onPress= {() => this.openModal()}/>
                         <Button style={styles.buttonStyle}
                             title = 'Settings'
                             backgroundColor={seaFoamGreen}
@@ -122,6 +193,17 @@ const styles = StyleSheet.create({
         fontSize: 20,
         color: seaFoamGreen,
         fontFamily: 'Helvetica-Bold',
+    },
+    modal: {
+        alignItems: 'center',
+        paddingTop: 100,
+    },
+    updateText: {
+        fontSize: 16,
+        fontStyle: 'italic',
+        color: '#969696',
+        paddingLeft: 10,
+        paddingRight: 10,
     },
     profileContainer: {
         alignItems: 'center',
