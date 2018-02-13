@@ -28,10 +28,10 @@ export default class Login extends React.Component {
 
     loginUser = (email, password, navigate) => {
         firebase.auth().signInWithEmailAndPassword(email, password)
-        .then(function(user){
+        .then(function(email){
             navigate('Dashboard', {email});
-        })
-        .catch(function(error){
+        },
+        function(error){
             Alert.alert('Login failed', error.toString());
             console.log(error.toString());
         });
@@ -44,8 +44,8 @@ export default class Login extends React.Component {
 
         return (
             <ImageBackground
-            source={background}
-            style={{width: '100%', height: '100%'}}>
+                source={background}
+                style={{width: '100%', height: '100%'}}>
                 <KeyboardAvoidingView
                     style={styles.container}
                     behavior='padding'>

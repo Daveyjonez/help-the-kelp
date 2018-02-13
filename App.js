@@ -11,6 +11,8 @@ import AddEvent from './components/AddEvent';
 import EventPage from './components/EventPage';
 import ModalTest from './components/ModalTest';
 import Settings from './components/Settings';
+import uploadtest from './components/uploadtest';
+import testEvent from './components/testEvent';
 
 const Application = StackNavigator({
     Login: { screen: Login},
@@ -21,6 +23,8 @@ const Application = StackNavigator({
     EventPage: {screen: EventPage},
     ModalTest: {screen: ModalTest},
     Settings: {screen: Settings},
+    uploadtest: {screen: uploadtest},
+    testEvent: {screen: testEvent},
 });
 
 export default class App extends React.Component {

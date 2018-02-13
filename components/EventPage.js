@@ -29,6 +29,8 @@ export default class EventPage extends React.Component {
         this.state = {
             modalVisible: false,
             isRSVP: false,
+            first: '',
+            last: '',
             comment: '',
             commentArr: [],
             volunteersHave: 0,
@@ -36,31 +38,44 @@ export default class EventPage extends React.Component {
     }
 
     componentWillMount() {
-        try{
-            var key = this.props.navigation.state.params.key;
-            var ref = firebase.database().ref('/events/' + key + '/volunteersHave');
-            ref.on('value', (snapshot) => {
-                this.setState({
-                    volunteersHave: snapshot.val,
-                });
-            });
-        }
-        catch(error){
-            Alert.alert('Uh oh', 'Something went wrong');
-            return;
-        }
+        this.fetchInfo();
         this.fetchComments();
     }
 
+    fetchInfo = () => {
+        try{
+            const key = this.props.navigation.state.params.key;
+            var ref = firebase.database().ref('/events/' + key);
+            ref.on('value', (snapshot) => {
+                eventData = snapshot.val();
+                this.setState({
+                    volunteersHave: snapshot.volunteersHave,
+                })
+            });
+
+            const userKey = firebase.auth().currentUser.uid
+            firebase.database().ref('users/' + userKey)
+            .once('value', (snapshot) => {
+                this.setState({
+                    first: snapshot.val().first,
+                    last: snapshot.val().last,
+                })
+            })
+        }
+        catch(error){
+            Alert.alert('Uh oh', 'Something went wrong loading the event');
+            return;
+        }
+    }
+
     fetchComments = () => {
-        var tempArr = [];
-        var key = this.props.navigation.state.params.key;
+        const key = this.props.navigation.state.params.key;
         var ref = firebase.database().ref('/events/' + key + '/comments/');
         ref.once('value').then((snapshot) => {
             this.snapshotToArray(snapshot);
-        })
-        .catch(function(error){
-            alert(console.log(error.toString()));
+        },
+        (error) => {
+            Alert.alert('Uh oh', 'Something went wrong fetching comments');
         });
     }
 
@@ -76,67 +91,24 @@ export default class EventPage extends React.Component {
         });
     };
 
-    postComment = (key) => {
-        try{
-            if(this.state.comment){
-                var tempArr = [];
-                firebase.database().ref().child('events/' + key + '/comments/').push({
-                    comment: this.state.comment,
-                });
-                this.closeModal();
-            }
-            else{
-                alert('Please do not post empty comments');
-                return;
-            }
-        }
-        catch(error){
-            alert('Something went wrong while posting your comment');
+    postComment = () => {
+        if(!this.state.comment){
+            Alert.alert('Hey :(','Please do not post empty comments');
             return;
         }
-    }
-
-    handleRSVP = (key) => {
-        if(this.state.isRSVP){
-            this.decRSVP(this.props.navigation.state.params.key);
-        }
-        else{
-            this.incRSVP(key);
-        }
-    }
-
-    incRSVP = (key) => {
-        firebase.database().ref('events/' + key + '/volunteersHave').transaction(
-            (currentVolunteers) => {
-                currentVolunteers++;
-                return(currentVolunteers)
-            });
-
-        var user = firebase.auth().currentUser;
-        firebase.database().ref().child('events/' + key + '/attendees/').push({
-            attendee: user.uid,
-        });
-
-        this.setState({
-            isRSVP: true,
-        });
-    }
-
-    decRSVP = (key) => {
-        var user = firebase.auth().currentUser;
-        var ref = firebase.database();
-
-        //TODO
-        //remove user id from event attendees
-
-        ref.ref('events/' + key + '/volunteersHave').transaction(
-            (currentVolunteers) => {
-                if(currentVolunteers >= 0){currentVolunteers--;}
-                return(currentVolunteers)
-            });
-
-        this.setState({
-            isRSVP: false,
+        const key = this.props.navigation.state.params.key;
+        const ref = firebase.database().ref().child('events/' + key + '/comments/');
+        ref.push({
+            comment: this.state.comment,
+        },
+        (error) => {
+            if(error){
+                Alert.alert('Uh oh', 'Something went wrong while posting your comment');
+                return;
+            }
+            else{
+                this.closeModal();
+            }
         });
     }
 
@@ -162,16 +134,14 @@ export default class EventPage extends React.Component {
                 title = "RSVP'd"
                 backgroundColor='gold'
                 icon={{name: 'star-circle', type: 'material-community'}}
-                borderRadius={10}
-                onPress ={() => this.handleRSVP(this.props.navigation.state.params.key)}/>
+                borderRadius={10}/>
         }
         else{
             rsvpButton =
             <Button style={styles.buttonStyle}
                title = 'RSVP'
                backgroundColor={seaFoamGreen}
-               borderRadius={10}
-               onPress ={() => this.handleRSVP(this.props.navigation.state.params.key)}/>
+               borderRadius={10}/>
         }
         return (
             <View style={styles.container}>
@@ -188,7 +158,7 @@ export default class EventPage extends React.Component {
                             multiline={true}
                             maxLength={140}/>
                         <Button style={styles.buttonStyle}
-                            title='Submit'
+                            title='Post'
                             backgroundColor={seaFoamGreen}
                             borderRadius={10}
                             onPress={() => this.postComment(this.props.navigation.state.params.key)}/>
@@ -239,7 +209,7 @@ export default class EventPage extends React.Component {
                 <View style={styles.buttons}>
                     {rsvpButton}
                     <Button style={styles.buttonStyle}
-                        title = 'Post comment'
+                        title = 'Write comment'
                         backgroundColor={seaFoamGreen}
                         borderRadius={10}
                         onPress ={() => this.openModal()}/>
@@ -252,8 +222,7 @@ export default class EventPage extends React.Component {
                     renderItem={({item}) =>
                     <CommentCard
                         imageSource={item.imageSource?imageSource:defaultImg}
-                        name={item.name}
-                        date={item.date}
+                        name={item.first + ' ' + item.last}
                         comment={item.comment}>
                     </CommentCard>}
                 />

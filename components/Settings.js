@@ -56,7 +56,7 @@ export default class AddEvent extends React.Component {
     logOut = () => {
         firebase.auth().signOut().then(function() {})
         .catch(function(error){
-            Alert.alert('Uh oh', error.toString());
+            Alert.alert('Uh oh', "Couldn't log you out");
         });
         firebase.database().goOffline();
         this.props.navigation.navigate('Login');

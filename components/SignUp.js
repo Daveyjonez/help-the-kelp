@@ -1,5 +1,6 @@
 import React from 'react';
-import { ImageBackground,
+import { Alert,
+        ImageBackground,
         KeyboardAvoidingView,
         StyleSheet,
         Text,
@@ -29,28 +30,24 @@ export default class SignUp extends React.Component {
     }
 
     signUpUser = () => {
+        if(this.state.password.length < 6){
+            alert('Please use at least 6 characters for your password')
+            return;
+        }
+        if(this.state.password !== this.state.confirmPassword){
+            Alert.alert('Uh oh', 'Passwords do not match');
+            return;
+        }
         try{
-            if(this.state.password.length < 6){
-                alert('Please use at least 6 characters for your password')
-                return;
-            }
-            if(this.state.password === this.state.confirmPassword){
-                firebase.auth().createUserWithEmailAndPassword(this.state.email, this.state.password).then( response => {
-                    firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password)
-
+            firebase.auth().createUserWithEmailAndPassword(this.state.email, this.state.password).then(
+                response => {
                     let state = this.state;
-                    firebase.auth().onAuthStateChanged((user) => {
-                        this.writeUserData(user, this.state.email, this.state.firstName, this.state.lastName);
-                    });
-                })
-                .catch(function(error){
-                    alert(console.log(error.toString()));
+                    let userID = firebase.auth().currentUser.uid;
+                    this.writeUserData(userID, this.state.email, this.state.firstName, this.state.lastName);
+                },
+                error => {
+                    Alert.alert('Uh oh', console.log(error.toString()));
                 });
-            }
-            else{
-                alert('Passwords do not match');
-                return;
-            }
             let email = this.state.email;
             this.props.navigation.navigate('Dashboard', {email});
         }
@@ -59,20 +56,20 @@ export default class SignUp extends React.Component {
         }
     }
 
-    writeUserData = (user, email, first, last) => {
-        firebase.database().ref('users/' + user.uid).set({
-                email: email,
-                first: first,
-                last: last,
-                profilePicture: null,
-                recycle: 0,
-                trash: 0,
-                attendance: 0,
-                hosted: 0,
-                locations: 0,
-                miles: 0,
-                rsvp: 0,
-            })
+    writeUserData = (uid, email, first, last) => {
+        firebase.database().ref('users/' + uid).set({
+            email: email,
+            first: first,
+            last: last,
+            profilePicture: null,
+            recycle: 0,
+            trash: 0,
+            attendance: 0,
+            hosted: 0,
+            locations: 0,
+            miles: 0,
+            rsvp: 0,
+        })
         .catch(function(error){
             Alert.alert('Uh oh', 'Something went wrong creating your account');
             console.log(error.toString());

@@ -13,13 +13,6 @@ import { seaFoamGreen } from '../assets/styles/colors';
 
 import * as firebase from 'firebase';
 
-const images = [{image:require('../assets/images/event_photos/sunset.jpg')},
-                {image:require('../assets/images/event_photos/keyhole.jpg')},
-                {image:require('../assets/images/event_photos/clouds.jpg')},
-                {image:require('../assets/images/event_photos/falcon.jpg')},
-                {image:require('../assets/images/event_photos/kauai.jpg')},
-                {image:require('../assets/images/event_photos/wheat.jpg')}];
-
 export default class Dashboard extends React.Component {
     constructor(props){
         super(props)
@@ -58,10 +51,9 @@ export default class Dashboard extends React.Component {
     }
 
     viewEvent = (title, date, location, host, description, volunteersHave, volunteersNeed,
-                    equipment, time, imageSource, imageIndex, key, navigate) => {
-        this.props.navigation.navigate('EventPage', {title, date, location, host,
-            description, volunteersHave, volunteersNeed, equipment, time,
-            imageIndex, key});
+                    equipment, time, key, navigate) => {
+        this.props.navigation.navigate('testEvent', {title, date, location, host,
+            description, volunteersHave, volunteersNeed, equipment, time, key});
     }
 
     static navigationOptions = ({ navigation }) => {
@@ -100,7 +92,7 @@ export default class Dashboard extends React.Component {
                         volunteersNeed={item.volunteersNeed}
                         equipment={item.equipment}
                         time={item.time}
-                        imageSource={images[item.imageIndex]}
+                        key={item.key}
                         onPress={() => this.viewEvent(item.title,
                                                         item.date,
                                                         item.location,
@@ -110,7 +102,6 @@ export default class Dashboard extends React.Component {
                                                         item.volunteersNeed,
                                                         item.equipment,
                                                         item.time,
-                                                        item.imageIndex,
                                                         item.key,
                                                         navigate)}>
                     </EventCard>}

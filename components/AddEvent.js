@@ -1,20 +1,23 @@
 import React from 'react';
-import { CameraRoll,
-         Image,
-         KeyboardAvoidingView,
-         Modal,
-         ScrollView,
-         StyleSheet,
-         Text,
-         TouchableHighlight,
-         View } from 'react-native';
+import { Alert,
+        CameraRoll,
+        Image,
+        KeyboardAvoidingView,
+        Modal,
+        ScrollView,
+        StyleSheet,
+        Text,
+        TouchableHighlight,
+        View } from 'react-native';
 import { Button,
-         CheckBox,
-         Icon } from 'react-native-elements';
+        CheckBox,
+        Icon } from 'react-native-elements';
+import { ImagePicker } from 'expo';
 import { Input } from './Input';
 
 import DateTimePicker from 'react-native-modal-datetime-picker';
 import * as firebase from 'firebase';
+import b64 from 'base64-js'
 
 import { seaFoamGreen } from '../assets/styles/colors';
 
@@ -27,7 +30,9 @@ export default class AddEvent extends React.Component {
     constructor(props){
         super(props)
         this.state = {
-            evenPhoto: null,
+            image: null,
+            imageByte: [],
+            imageData: {},
             title: '',
             host: '',
             description: '',
@@ -47,8 +52,6 @@ export default class AddEvent extends React.Component {
         if(this.state.host && this.state.title && this.state.description && this.state.rawDate
          && this.state.time && this.state.volunteersNeed) {
 
-            var randomIndex = Math.floor(Math.random() * (6 - 0 + 1)) + 0;
-            console.log(randomIndex);
             firebase.database().ref('events/').push({
                 title: this.state.title,
                 host: this.state.host,
@@ -60,21 +63,45 @@ export default class AddEvent extends React.Component {
                 volunteersHave: this.state.volunteersHave,
                 volunteersNeed: Number(this.state.volunteersNeed),
                 equipment: this.state.equipment,
-                imageIndex: randomIndex,
             })
             .catch(function(error){
-                alert(console.log(error.toString()));
+                Alert.alert('Uh oh', error.toString());
             });
-
-            alert('Event successfully created!')
+/*
+            var storeRef = firebase.storage().ref()
+            storeRef.child('test.jpg').put(this.state.imageByte).then(snapshot => {
+                console.log("uploaded image!")
+            })
+            .catch(function(error){
+                console.log(error.toString())
+            });
+*/
+            Alert.alert('Congrats!', 'Event successfully created!')
             this.props.navigation.navigate('Dashboard');
             return;
         }
         else{
-            alert('Please complete all forms');
+            Alert.alert('Uh oh', 'Please complete all forms');
             return;
         }
     }
+
+    pickImage = async () => {
+        const result = await ImagePicker.launchImageLibraryAsync({
+          allowsEditing: true,
+          aspect: [4, 3],
+          base64: true,
+        });
+
+        const byteArray = b64.toByteArray(result.base64);
+        this.setState({
+            imageByte: byteArray,
+            imageData: {contentType: 'image/jpg'},
+        })
+        if (!result.cancelled) {
+          this.setState({ image: result.uri });
+        }
+    };
 
     changeEquipment = () => this.setState({equipment: !this.state.equipment});
 
@@ -101,16 +128,25 @@ export default class AddEvent extends React.Component {
     static navigationOptions = ({ navigation }) => {
         return {
             headerTintColor: seaFoamGreen,
-            headerTitle: (<Text style={styles.headerTitle}>New Event</Text>),
+            headerTitle: (<Text style={styles.headerTitle}>Create Event</Text>),
         }
     };
 
     render(){
+        var { image } = this.state;
+
         return (
             <View style={styles.bgContainer}>
                 <ScrollView>
                     <View style={styles.fgContainer}>
                     <View style={styles.eventDetails}>
+                        {image &&
+                            <Image source={{ uri: image }} style={{ width: '100%', height: 200 }} />}
+                        <Button style={styles.buttonStyle}
+                            title='Choose event image'
+                            backgroundColor={seaFoamGreen}
+                            borderRadius={10}
+                            onPress={this.pickImage}/>
                         <Input
                             placeholder = 'Event title'
                             onChangeText = {title => this.setState({title})}

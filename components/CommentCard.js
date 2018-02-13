@@ -76,10 +76,9 @@ export default class CommentCard extends React.Component {
             borderRadius: 10,
         },
         nameText: {
-            fontSize: 18,
+            fontSize: 16,
             color: seaFoamGreen,
-            fontFamily: 'Helvetica-Bold',
-            marginLeft: 10,
+            marginLeft: 5,
         },
         commentText: {
             fontSize: 14,
