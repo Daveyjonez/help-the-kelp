@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     numText: {
-        fontSize: 12,
+        fontSize: 16,
         color: '#969696',
         fontFamily: 'Helvetica-Bold',
     },

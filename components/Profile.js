@@ -231,16 +231,4 @@ const styles = StyleSheet.create({
         paddingTop: 20,
         width: 300,
     },
-    dataNum: {
-        fontSize: 50,
-        color: seaFoamGreen,
-        fontFamily: 'Helvetica-Bold',
-        paddingTop: 10,
-    },
-    dataText: {
-        fontSize: 16,
-        color: '#969696',
-        fontFamily: 'Helvetica',
-        paddingTop: 5,
-    },
 });

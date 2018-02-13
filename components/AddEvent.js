@@ -40,7 +40,6 @@ export default class AddEvent extends React.Component {
             date: 'No date set',
             time: '00:00',
             location: '',
-            volunteersHave: 1,
             volunteersNeed: null,
             equipment: false,
             isDatePickerVisible: false,
@@ -51,31 +50,24 @@ export default class AddEvent extends React.Component {
     createEvent = () => {
         if(this.state.host && this.state.title && this.state.description && this.state.rawDate
          && this.state.time && this.state.volunteersNeed) {
-
-            firebase.database().ref('events/').push({
-                title: this.state.title,
-                host: this.state.host,
-                description: this.state.description,
-                rawDate: this.state.rawDate,
-                date: this.state.date,
-                time: this.state.time,
-                location: this.state.location,
-                volunteersHave: this.state.volunteersHave,
-                volunteersNeed: Number(this.state.volunteersNeed),
-                equipment: this.state.equipment,
-            })
+             let userID = firebase.auth().currentUser.uid;
+             let eventKey = firebase.database().ref('events/').push({
+                 title: this.state.title,
+                 host: this.state.host,
+                 description: this.state.description,
+                 rawDate: this.state.rawDate,
+                 date: this.state.date,
+                 time: this.state.time,
+                 location: this.state.location,
+                 volunteersNeed: Number(this.state.volunteersNeed),
+                 equipment: this.state.equipment,
+                 attendees: {
+                 },
+             })
             .catch(function(error){
                 Alert.alert('Uh oh', error.toString());
             });
-/*
-            var storeRef = firebase.storage().ref()
-            storeRef.child('test.jpg').put(this.state.imageByte).then(snapshot => {
-                console.log("uploaded image!")
-            })
-            .catch(function(error){
-                console.log(error.toString())
-            });
-*/
+
             Alert.alert('Congrats!', 'Event successfully created!')
             this.props.navigation.navigate('Dashboard');
             return;

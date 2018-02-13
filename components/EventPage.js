@@ -39,24 +39,44 @@ export default class EventPage extends React.Component {
     }
 
     fetchInfo = () => {
-        try{
-            const eventKey = this.props.navigation.state.params.key;
-            let eventRef = firebase.database().ref('/events/' + eventKey);
-            eventRef.once('value', (snapshot) => {
-                eventData = snapshot.val();
-                newVolunteers = snapshot.volunteersHave;
-            });
-
-            const userKey = firebase.auth().currentUser.uid
-            let userRef = firebase.database().ref('users/' + userKey);
-            userRef.once('value', (snapshot) => {
-                name = snapshot.val().first + ' ' + snapshot.val().last;
-            });
-        }
-        catch(error){
-            Alert.alert('Uh oh', 'Something went wrong loading the event');
+        const eventKey = this.props.navigation.state.params.key;
+        let ref = firebase.database().ref('/events/' + eventKey);
+        ref.on('value', (snapshot) => {
+            eventData = snapshot.val();
+            let currVolunteers = Object.keys(eventData.attendees).length.toString();
+            console.log('CURRENT VOLUNTEER COUNT: ');
+            console.log(currVolunteers);
+            this.setState({
+                volunteersHave: currVolunteers,
+            })
+        },
+        (error) => {
+            Alert.alert('Uh oh', 'Something went wrong fetching event data');
+            console.log(error.toString());
             return;
+        });
+    }
+
+    handleRSVP = () => {
+        const eventKey = this.props.navigation.state.params.key;
+        const userKey = firebase.auth().currentUser.uid
+        console.log('EVENT KEY: ' + eventKey);
+        let ref = firebase.database().ref('events/' + eventKey + '/attendees/');
+        if(!this.state.isRSVP){
+            ref.set({
+                attendee: userKey
+            })
         }
+        else{
+            ref.orderByChild('attendee').equalTo(userKey).once('value', snapshot => {
+                let updates = {};
+                snapshot.forEach(child => updates[child.key] = null);
+                ref.update(updates);
+            });
+        }
+        this.setState({
+            isRSVP: !this.state.isRSVP,
+        });
     }
 
     static navigationOptions = ({ navigation }) => {
@@ -75,14 +95,16 @@ export default class EventPage extends React.Component {
                 title = "RSVP'd"
                 backgroundColor='gold'
                 icon={{name: 'star-circle', type: 'material-community'}}
-                borderRadius={10}/>
+                borderRadius={10}
+                onPress = {() => this.handleRSVP()}/>
         }
         else{
             rsvpButton =
             <Button style={styles.buttonStyle}
                title = 'RSVP'
                backgroundColor={seaFoamGreen}
-               borderRadius={10}/>
+               borderRadius={10}
+               onPress = {() => this.handleRSVP()}/>
         }
         return (
             <View style={styles.container}>
