@@ -23,8 +23,11 @@ export default class Dashboard extends React.Component {
 
     componentWillMount = () => {
         try{
+            console.log('---- MOUNTING DASHBOARD ----');
             var ref = firebase.database().ref('/events/');
             ref.on('value', (snapshot) => {
+                console.log('---- DASH SNAPSHOT ----');
+                console.log(snapshot);
                 this.snapshotToArray(snapshot);
             });
         }
@@ -52,7 +55,8 @@ export default class Dashboard extends React.Component {
 
     viewEvent = (title, date, location, host, description, volunteersHave, volunteersNeed,
                     equipment, time, key, navigate) => {
-        this.props.navigation.navigate('testEvent', {title, date, location, host,
+                        console.log('---- NAVIGATING EVENT PAGE ----');
+        this.props.navigation.navigate('EventPage', {title, date, location, host,
             description, volunteersHave, volunteersNeed, equipment, time, key});
     }
 

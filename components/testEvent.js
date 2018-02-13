@@ -26,10 +26,15 @@ export default class testEvent extends React.Component {
     }
 
     fetchComments = () => {
-        const key = this.props.navigation.state.params.key;
-        var ref = firebase.database().ref('/events/' + key + '/comments/');
-        ref.once('value').then((snapshot) => {
-            this.snapshotToArray(snapshot);
+        console.log('---- FETCHING COMMENTS ----');
+        const eventKey = this.props.navigation.state.params.key;
+        let tempArr = [];
+        console.log('event key: ' + eventKey);
+        const ref = firebase.database().ref('/events/' + eventKey + '/comments/');
+        ref.on('value', (snapshot) => {
+            console.log('---- COMMENT THREAD ----');
+            console.log(snapshot);
+            newComments = this.snapshotToArray(snapshot);
         },
         (error) => {
             Alert.alert('Uh oh', 'Something went wrong fetching comments');
@@ -37,25 +42,28 @@ export default class testEvent extends React.Component {
     }
 
     snapshotToArray = snapshot => {
-        var tempArr = [];
+        let retArr = [];
+        console.log('---- CONVERTING SNAPSHOT TO ARRAY ----');
         snapshot.forEach(childSnapshot => {
-            var item = childSnapshot.val();
+            let item = childSnapshot.val();
             item.key = childSnapshot.key;
-            tempArr.push(item);
+            retArr.push(item);
         });
-        this.setState({
-            commentArr: tempArr
-        });
+        return retArr;
     };
 
     postComment = () => {
+        console.log('---- POSTING COMMENT ----');
         if(!this.state.comment){
             Alert.alert('Hey :(','Please do not post empty comments');
             return;
         }
+        console.log('comment: ' + this.state.comment);
+        console.log('name: ' + this.state.first +' '+ this.state.last);
         const key = this.props.navigation.state.params.key;
         const ref = firebase.database().ref().child('events/' + key + '/comments/');
         ref.push({
+            name: name,
             comment: this.state.comment,
         },
         (error) => {
@@ -65,15 +73,14 @@ export default class testEvent extends React.Component {
             }
             else{
                 this.closeModal();
+                console.log('---- COMMENT POST SUCCESSFUL ----');
             }
         });
     }
 
     openModal() {this.setState({modalVisible: true});}
-    closeModal = () => {
-        this.fetchComments();
-        this.setState({modalVisible: false});
-    }
+    closeModal = () => {this.setState({modalVisible: false});}
+
     static navigationOptions = ({ navigation }) => {
         return {
             headerTitle: (<Text style={styles.headerTitle}>Event Page</Text>),

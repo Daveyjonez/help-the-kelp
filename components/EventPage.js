@@ -29,93 +29,34 @@ export default class EventPage extends React.Component {
         this.state = {
             modalVisible: false,
             isRSVP: false,
-            first: '',
-            last: '',
-            comment: '',
-            commentArr: [],
             volunteersHave: 0,
         }
     }
 
-    componentWillMount() {
+    componentDidMount() {
+        console.log('---- MOUNTING EVENT PAGE ----');
         this.fetchInfo();
-        this.fetchComments();
     }
 
     fetchInfo = () => {
         try{
-            const key = this.props.navigation.state.params.key;
-            var ref = firebase.database().ref('/events/' + key);
-            ref.on('value', (snapshot) => {
+            const eventKey = this.props.navigation.state.params.key;
+            let eventRef = firebase.database().ref('/events/' + eventKey);
+            eventRef.once('value', (snapshot) => {
                 eventData = snapshot.val();
-                this.setState({
-                    volunteersHave: snapshot.volunteersHave,
-                })
+                newVolunteers = snapshot.volunteersHave;
             });
 
             const userKey = firebase.auth().currentUser.uid
-            firebase.database().ref('users/' + userKey)
-            .once('value', (snapshot) => {
-                this.setState({
-                    first: snapshot.val().first,
-                    last: snapshot.val().last,
-                })
-            })
+            let userRef = firebase.database().ref('users/' + userKey);
+            userRef.once('value', (snapshot) => {
+                name = snapshot.val().first + ' ' + snapshot.val().last;
+            });
         }
         catch(error){
             Alert.alert('Uh oh', 'Something went wrong loading the event');
             return;
         }
-    }
-
-    fetchComments = () => {
-        const key = this.props.navigation.state.params.key;
-        var ref = firebase.database().ref('/events/' + key + '/comments/');
-        ref.once('value').then((snapshot) => {
-            this.snapshotToArray(snapshot);
-        },
-        (error) => {
-            Alert.alert('Uh oh', 'Something went wrong fetching comments');
-        });
-    }
-
-    snapshotToArray = snapshot => {
-        var tempArr = [];
-        snapshot.forEach(childSnapshot => {
-            var item = childSnapshot.val();
-            item.key = childSnapshot.key;
-            tempArr.push(item);
-        });
-        this.setState({
-            commentArr: tempArr
-        });
-    };
-
-    postComment = () => {
-        if(!this.state.comment){
-            Alert.alert('Hey :(','Please do not post empty comments');
-            return;
-        }
-        const key = this.props.navigation.state.params.key;
-        const ref = firebase.database().ref().child('events/' + key + '/comments/');
-        ref.push({
-            comment: this.state.comment,
-        },
-        (error) => {
-            if(error){
-                Alert.alert('Uh oh', 'Something went wrong while posting your comment');
-                return;
-            }
-            else{
-                this.closeModal();
-            }
-        });
-    }
-
-    openModal() {this.setState({modalVisible: true});}
-    closeModal = () => {
-        this.fetchComments();
-        this.setState({modalVisible: false});
     }
 
     static navigationOptions = ({ navigation }) => {
@@ -161,9 +102,9 @@ export default class EventPage extends React.Component {
                             title='Post'
                             backgroundColor={seaFoamGreen}
                             borderRadius={10}
-                            onPress={() => this.postComment(this.props.navigation.state.params.key)}/>
+                            onPress={() => this.postComment()}/>
                         <Button style={styles.buttonStyle}
-                            title='Discard'
+                            title='Back'
                             backgroundColor={seaFoamGreen}
                             borderRadius={10}
                             onPress={() => this.closeModal()}/>
@@ -211,8 +152,7 @@ export default class EventPage extends React.Component {
                     <Button style={styles.buttonStyle}
                         title = 'Write comment'
                         backgroundColor={seaFoamGreen}
-                        borderRadius={10}
-                        onPress ={() => this.openModal()}/>
+                        borderRadius={10}/>
                 </View>
                 <FlatList style={styles.list}
                     data={this.state.commentArr}
@@ -222,7 +162,7 @@ export default class EventPage extends React.Component {
                     renderItem={({item}) =>
                     <CommentCard
                         imageSource={item.imageSource?imageSource:defaultImg}
-                        name={item.first + ' ' + item.last}
+                        name={item.name}
                         comment={item.comment}>
                     </CommentCard>}
                 />
