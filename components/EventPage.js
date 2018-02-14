@@ -30,12 +30,70 @@ export default class EventPage extends React.Component {
             modalVisible: false,
             isRSVP: false,
             volunteersHave: 0,
+            comment: '',
+            commentArr: [],
         }
     }
 
     componentWillMount() {
         console.log('---- WILL MOUNT EVENT PAGE ----');
         this.fetchInfo();
+        this.fetchComments();
+    }
+
+    fetchComments = () => {
+        console.log('---- FETCHING COMMENTS ----');
+        const eventKey = this.props.navigation.state.params.key;
+        let tempArr = [];
+        console.log('event key: ' + eventKey);
+        const ref = firebase.database().ref('/events/' + eventKey + '/comments/');
+        ref.on('value', (snapshot) => {
+            console.log('---- COMMENT THREAD ----');
+            console.log(snapshot);
+            tempArr = this.snapshotToArray(snapshot);
+        },
+        (error) => {
+            Alert.alert('Uh oh', 'Something went wrong fetching comments');
+        });
+        this.setState({
+            commentArr: tempArr,
+        });
+    }
+
+    snapshotToArray = snapshot => {
+        let retArr = [];
+        console.log('---- CONVERTING SNAPSHOT TO ARRAY ----');
+        snapshot.forEach(childSnapshot => {
+            let item = childSnapshot.val();
+            item.key = childSnapshot.key;
+            retArr.push(item);
+        });
+        return retArr;
+    };
+
+    postComment = () => {
+        console.log('---- POSTING COMMENT ----');
+        if(!this.state.comment){
+            Alert.alert('Hey :(','Please do not post empty comments');
+            return;
+        }
+        console.log('comment: ' + this.state.comment);
+        console.log('name: ' + this.state.first +' '+ this.state.last);
+        const key = this.props.navigation.state.params.key;
+        const ref = firebase.database().ref().child('events/' + key + '/comments/');
+        ref.push({
+            comment: this.state.comment,
+        },
+        (error) => {
+            if(error){
+                Alert.alert('Uh oh', 'Something went wrong while posting your comment');
+                return;
+            }
+            else{
+                this.closeModal();
+                console.log('---- COMMENT POST SUCCESSFUL ----');
+            }
+        });
     }
 
     fetchInfo = () => {
@@ -90,6 +148,9 @@ export default class EventPage extends React.Component {
             isRSVP: !this.state.isRSVP,
         });
     }
+
+    openModal() {this.setState({modalVisible: true});}
+    closeModal = () => {this.setState({modalVisible: false});}
 
     static navigationOptions = ({ navigation }) => {
         return {
@@ -171,11 +232,12 @@ export default class EventPage extends React.Component {
                     <Button style={styles.buttonStyle}
                         title='Write comment'
                         backgroundColor={seaFoamGreen}
-                        borderRadius={10}/>
+                        borderRadius={10}
+                        onPress={() => this.openModal()}/>
                 </View>
                 <FlatList style={styles.list}
                     data={this.state.commentArr}
-                    scrollEnabled={this.state.scrollEnabled}
+                    scrollEnabled={false}
                     contentContainerStyle={{alignItems:'center'}}
                     ListEmptyComponent={<Text style={styles.commentText}>No comments yet...</Text>}
                     renderItem={({item}) =>

@@ -44,7 +44,12 @@ export default class Dashboard extends React.Component {
         snapshot.forEach(childSnapshot => {
             let item = childSnapshot.val();
             item.key = childSnapshot.key;
-            item.volunteersHave = Object.keys(item.attendees).length;
+            if(item.attendees){
+                item.volunteersHave = Object.keys(item.attendees).length;
+            }
+            else{
+                item.volunteersHave = 0;
+            }
             retArr.push(item);
         });
         return retArr;
