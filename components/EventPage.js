@@ -40,12 +40,21 @@ export default class EventPage extends React.Component {
 
     fetchInfo = () => {
         const eventKey = this.props.navigation.state.params.key;
-        let ref = firebase.database().ref('/events/' + eventKey);
+        const userID = firebase.auth().currentUser.uid;
+        let ref = firebase.database().ref('events/' + eventKey + '/attendees');
         ref.on('value', (snapshot) => {
-            eventData = snapshot.val();
-            let currVolunteers = Object.keys(eventData.attendees).length.toString();
-            console.log('CURRENT VOLUNTEER COUNT: ');
-            console.log(currVolunteers);
+            snapshot.forEach((childSnap) => {
+                let tempID = JSON.stringify(childSnap.child('attendee'));
+                tempID = tempID.slice(1, -1);
+                if(tempID === userID){
+                    this.setState({
+                        isRSVP: true,
+                    })
+                }
+            });
+
+            let currVolunteers = snapshot.numChildren();
+            console.log('CURRENT VOLUNTEER COUNT: ' + currVolunteers);
             this.setState({
                 volunteersHave: currVolunteers,
             })
@@ -63,15 +72,16 @@ export default class EventPage extends React.Component {
         console.log('EVENT KEY: ' + eventKey);
         let ref = firebase.database().ref('events/' + eventKey + '/attendees/');
         if(!this.state.isRSVP){
-            ref.set({
+            ref.push({
                 attendee: userKey
             })
         }
         else{
             ref.orderByChild('attendee').equalTo(userKey).once('value', snapshot => {
                 let updates = {};
-                snapshot.forEach(child => updates[child.key] = null);
-                ref.update(updates);
+                snapshot.forEach(child => {
+                    ref.child(child.key).remove();
+                });
             });
         }
         this.setState({
@@ -87,25 +97,6 @@ export default class EventPage extends React.Component {
     }
 
     render(){
-        var isRSVP = this.state.isRSVP
-        var rsvpButton = false;
-        if(isRSVP){
-            rsvpButton =
-            <Button style={styles.buttonStyle}
-                title = "RSVP'd"
-                backgroundColor='gold'
-                icon={{name: 'star-circle', type: 'material-community'}}
-                borderRadius={10}
-                onPress = {() => this.handleRSVP()}/>
-        }
-        else{
-            rsvpButton =
-            <Button style={styles.buttonStyle}
-               title = 'RSVP'
-               backgroundColor={seaFoamGreen}
-               borderRadius={10}
-               onPress = {() => this.handleRSVP()}/>
-        }
         return (
             <View style={styles.container}>
                 <ScrollView style={styles.modal}>
@@ -149,7 +140,7 @@ export default class EventPage extends React.Component {
                             type='material-community'
                             iconStyle={styles.rsvp}/>
                         <Text style={styles.iconText}>
-                            {this.props.navigation.state.params.volunteersHave}/{this.props.navigation.state.params.volunteersNeed}
+                            {this.state.volunteersHave}/{this.props.navigation.state.params.volunteersNeed}
                         </Text>
                     </View>
 
@@ -170,9 +161,13 @@ export default class EventPage extends React.Component {
                     </View>
                 </View>
                 <View style={styles.buttons}>
-                    {rsvpButton}
                     <Button style={styles.buttonStyle}
-                        title = 'Write comment'
+                        title={this.state.isRSVP?"RSVP'd":'RSVP'}
+                        backgroundColor={this.state.isRSVP?'gold':seaFoamGreen}
+                        borderRadius={10}
+                        onPress={() => this.handleRSVP()}/>
+                    <Button style={styles.buttonStyle}
+                        title='Write comment'
                         backgroundColor={seaFoamGreen}
                         borderRadius={10}/>
                 </View>

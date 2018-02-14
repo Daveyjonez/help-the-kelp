@@ -21,7 +21,7 @@ export default class Dashboard extends React.Component {
         }
     }
 
-    componentWillMount = () => {
+    componentDidMount = () => {
         try{
             console.log('---- MOUNTING DASHBOARD ----');
             var ref = firebase.database().ref('/events/');
