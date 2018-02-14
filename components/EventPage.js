@@ -33,43 +33,45 @@ export default class EventPage extends React.Component {
         }
     }
 
-    componentDidMount() {
-        console.log('---- MOUNTING EVENT PAGE ----');
+    componentWillMount() {
+        console.log('---- WILL MOUNT EVENT PAGE ----');
         this.fetchInfo();
     }
 
     fetchInfo = () => {
         const eventKey = this.props.navigation.state.params.key;
         const userID = firebase.auth().currentUser.uid;
+
+        let tempRSVP = false;
+        let currVolunteers = 0;
+
         let ref = firebase.database().ref('events/' + eventKey + '/attendees');
+
         ref.on('value', (snapshot) => {
             snapshot.forEach((childSnap) => {
+                currVolunteers = snapshot.numChildren();
+
                 let tempID = JSON.stringify(childSnap.child('attendee'));
                 tempID = tempID.slice(1, -1);
                 if(tempID === userID){
-                    this.setState({
-                        isRSVP: true,
-                    })
+                    tempRSVP = true;
                 }
             });
-
-            let currVolunteers = snapshot.numChildren();
-            console.log('CURRENT VOLUNTEER COUNT: ' + currVolunteers);
-            this.setState({
-                volunteersHave: currVolunteers,
-            })
         },
         (error) => {
             Alert.alert('Uh oh', 'Something went wrong fetching event data');
-            console.log(error.toString());
             return;
+        });
+        this.setState({
+            isRSVP: tempRSVP,
+            volunteersHave: currVolunteers,
         });
     }
 
     handleRSVP = () => {
         const eventKey = this.props.navigation.state.params.key;
         const userKey = firebase.auth().currentUser.uid
-        console.log('EVENT KEY: ' + eventKey);
+
         let ref = firebase.database().ref('events/' + eventKey + '/attendees/');
         if(!this.state.isRSVP){
             ref.push({
@@ -140,7 +142,7 @@ export default class EventPage extends React.Component {
                             type='material-community'
                             iconStyle={styles.rsvp}/>
                         <Text style={styles.iconText}>
-                            {this.state.volunteersHave}/{this.props.navigation.state.params.volunteersNeed}
+                            {this.props.navigation.state.params.volunteersHave}/{this.props.navigation.state.params.volunteersNeed}
                         </Text>
                     </View>
 

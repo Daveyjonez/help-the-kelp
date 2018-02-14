@@ -21,14 +21,16 @@ export default class Dashboard extends React.Component {
         }
     }
 
-    componentDidMount = () => {
+    componentWillMount = () => {
+        console.log('---- WILL MOUNT DASHBOARD ----');
+        let tempArr = [];
         try{
-            console.log('---- MOUNTING DASHBOARD ----');
-            var ref = firebase.database().ref('/events/');
-            ref.on('value', (snapshot) => {
-                console.log('---- DASH SNAPSHOT ----');
-                console.log(snapshot);
-                this.snapshotToArray(snapshot);
+            let ref = firebase.database().ref('/events/');
+            ref.once('value', (snapshot) => {
+                tempArr = this.snapshotToArray(snapshot);
+                this.setState({
+                    eventArr: tempArr,
+                })
             });
         }
         catch(error){
@@ -38,15 +40,14 @@ export default class Dashboard extends React.Component {
     }
 
     snapshotToArray = snapshot => {
-        var tempArr = [];
+        let retArr = [];
         snapshot.forEach(childSnapshot => {
-            var item = childSnapshot.val();
+            let item = childSnapshot.val();
             item.key = childSnapshot.key;
-            tempArr.push(item);
+            item.volunteersHave = Object.keys(item.attendees).length;
+            retArr.push(item);
         });
-        this.setState({
-            eventArr: tempArr
-        });
+        return retArr;
     };
 
     viewProfile = (name) => {

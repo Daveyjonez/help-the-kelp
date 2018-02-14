@@ -67,6 +67,11 @@ export default class AddEvent extends React.Component {
             .catch(function(error){
                 Alert.alert('Uh oh', error.toString());
             });
+            const userKey = firebase.auth().currentUser.uid
+            let ref = firebase.database().ref('events/' + eventKey + '/attendees/');
+            ref.push({
+                attendee: userKey
+            });
 
             Alert.alert('Congrats!', 'Event successfully created!')
             this.props.navigation.navigate('Dashboard');
